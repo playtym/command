@@ -94,7 +94,7 @@ const recentTrans = [
 
 export default function Spend() {
   const navigate = useNavigate()
-  const [activeCardId, setActiveCardId] = useState(1)
+  const [activeCardId, setActiveCardId] = useState(null)
   const totalSpent = 27440
   const monthlyLimit = 45000
 
