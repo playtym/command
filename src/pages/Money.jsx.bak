@@ -1,0 +1,329 @@
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Target } from 'lucide-react'
+import { Page, Dot, SH, Card, WhiteCard, Num, AnimNum, Badge, PillGroup, Btn, ScrollRow, GradientCard, stagger } from '../components/UI'
+import { Ring, Bar, BarLight, Sparkline, SegmentBar } from '../components/Charts'
+import { StoryViewer, StoryRow } from '../components/StoryViewer'
+
+/* ─── Data ─── */
+const holdings = [
+  { name: 'Parag Parikh Flexi', type: 'Equity MF', invested: 112000, current: 137377, sip: 5000, trend: [132000, 133400, 134100, 135200, 134800, 136200, 137377] },
+  { name: 'Nifty 50 Index', type: 'Index Fund', invested: 120000, current: 142380, sip: 5000, trend: [138000, 139200, 140100, 141300, 140800, 141900, 142380] },
+  { name: 'SBI Bluechip', type: 'Large Cap', invested: 60000, current: 68200, sip: 2500, trend: [64000, 65200, 64800, 66100, 67000, 67500, 68200] },
+  { name: 'HDFC Corp Bond', type: 'Debt MF', invested: 100000, current: 106115, sip: 3000, trend: [102000, 103100, 103800, 104200, 105000, 105500, 106115] },
+  { name: 'SGB 2028', type: 'Gold Bond', invested: 50000, current: 57881, sip: 0, trend: [52000, 53200, 54100, 55000, 55800, 56900, 57881] },
+]
+
+const allocationSegs = [
+  { label: 'Equity', value: 58, color: 'var(--orange)', amount: 279757 },
+  { label: 'Debt', value: 22, color: 'var(--blue)', amount: 106115 },
+  { label: 'Gold', value: 12, color: 'var(--gold)', amount: 57881 },
+  { label: 'Cash', value: 8, color: 'var(--green)', amount: 38587 },
+]
+
+const banks = [
+  { name: 'HDFC Savings', balance: 124500, icon: '🏦', type: 'Savings' },
+  { name: 'SBI Salary A/C', balance: 38587, icon: '🏛️', type: 'Salary' },
+  { name: 'Zerodha Demat', balance: 279757, icon: '📈', type: 'Investments' },
+  { name: 'HDFC Credit Card', balance: -47800, icon: '💳', type: 'Credit' },
+]
+
+const goals = [
+  { name: 'Emergency Fund', emoji: '🛡️', target: 255000, current: 163087, deadline: 'Dec 2026', color: 'var(--red)' },
+  { name: 'Europe Trip', emoji: '✈️', target: 400000, current: 85000, deadline: 'Jun 2027', color: 'var(--blue)' },
+  { name: 'Down Payment', emoji: '🏠', target: 2000000, current: 482340, deadline: 'Dec 2030', color: 'var(--purple)' },
+]
+
+const benchmarks = [
+  { name: 'Nifty 50', value: 14.2, yours: 23.0 },
+  { name: 'FD Rate', value: 7.0, yours: 23.0 },
+  { name: 'Inflation', value: 5.4, yours: 23.0 },
+]
+
+/* ─── Portfolio Stories ─── */
+const portfolioStories = [
+  {
+    id: 0, emoji: '📈', title: 'Portfolio', subtitle: '+₹69.9K',
+    storyTitle: "You're flexing on everyone.",
+    storyText: "We ran the numbers. Your 23% XIRR destroys every benchmark out there. Most people earn FD returns and call it investing. Not you.",
+    visual: {
+      type: 'bars', label: 'You vs. The World (Annualized)',
+      data: [
+        { label: 'Inflation', value: 5.4, suffix: '%' },
+        { label: 'Your neighbor\'s FD', value: 7.0, suffix: '%' },
+        { label: 'Nifty 50', value: 14.2, suffix: '%' },
+        { label: 'You, legend', value: 23.0, suffix: '%', highlight: true, flag: '🏆' },
+      ],
+    },
+    cta: 'Bask in Your Glory', bg1: '#E8613A', bg2: '#E88A3A',
+    save: '+₹69,953', saveLabel: 'Total returns',
+    gradient: 'linear-gradient(45deg, #E8613A, #E88A3A)',
+  },
+  {
+    id: 1, emoji: '🛡️', title: 'Emergency', subtitle: '64% done',
+    storyTitle: "So close, don't ghost me.",
+    storyText: "We see ₹1.63L in your emergency fund. Target is ₹2.55L. You're 64% there — just ₹7.6K/month and you'll be bulletproof by December:",
+    visual: {
+      type: 'progress', percent: 64, label: 'Emergency Fund Progress',
+      leftLabel: '₹1.63L saved', rightLabel: '₹2.55L target',
+      note: '₹7,600/mo × 12 months = Fully funded by Dec 2026',
+    },
+    cta: 'Top Up ₹7,600 This Month', bg1: '#F87171', bg2: '#EF4444',
+    save: '₹91,913', saveLabel: 'Still needed',
+    gradient: 'linear-gradient(45deg, #F87171, #EF4444)',
+  },
+  {
+    id: 2, emoji: '⚖️', title: 'Rebalance', subtitle: 'Equity heavy',
+    storyTitle: "Equity had a party. Time to clean up.",
+    storyText: "Markets rallied and your equity hit 58% — 8% above target. We calculated the exact move to lock in gains and lower risk:",
+    visual: {
+      type: 'breakdown', label: 'Your Allocation vs Target', showTarget: true,
+      data: [
+        { label: 'Equity', value: 58, target: 50, color: '#E8613A' },
+        { label: 'Debt', value: 22, target: 30, color: '#60A5FA' },
+        { label: 'Gold', value: 12, target: 15, color: '#FCD34D' },
+        { label: 'Cash', value: 8, target: 5, color: '#4ADE80' },
+      ],
+    },
+    cta: 'Rebalance — Move ₹40K to Debt', bg1: '#60A5FA', bg2: '#3B82F6',
+    save: 'Risk ↓', saveLabel: 'Sharpe ratio improves',
+    gradient: 'linear-gradient(45deg, #60A5FA, #3B82F6)',
+  },
+  {
+    id: 3, emoji: '💎', title: 'Gold', subtitle: '+15.8%',
+    storyTitle: "The taxman can't touch me.",
+    storyText: "Your SGB 2028 is up 15.8% PLUS 2.5% annual interest — all tax-free at maturity. This is your most efficient asset. Don't sell early.",
+    visual: {
+      type: 'metrics',
+      data: [
+        { label: 'Capital Gain', value: '+15.8%', sub: '₹7,881' },
+        { label: 'Interest', value: '2.5%/yr', sub: 'Tax-free 🤩', highlight: true },
+        { label: 'Maturity Tax', value: '0%', sub: 'Hold till 2028', highlight: true },
+      ],
+    },
+    cta: 'Hold Tight — 2 Years Left', bg1: '#FCD34D', bg2: '#D97706',
+    save: '+₹7,881', saveLabel: 'Gold returns',
+    gradient: 'linear-gradient(45deg, #FCD34D, #D97706)',
+  },
+]
+
+const portfolioTrend = [458000, 461200, 459800, 464300, 462100, 465800, 467200, 469500, 466800, 470100, 472300, 468900, 471500, 474200, 476800, 473400, 475900, 478100, 474800, 477200, 479500, 476100, 478400, 480200, 477800, 479100, 480800, 481200, 481900, 511953]
+
+export default function Money() {
+  const [tab, setTab] = useState('Overview')
+  const [activeStory, setActiveStory] = useState(null)
+  const totalInvested = holdings.reduce((s, h) => s + h.invested, 0)
+  const totalCurrent = holdings.reduce((s, h) => s + h.current, 0)
+  const totalReturn = totalCurrent - totalInvested
+  const returnPct = ((totalReturn / totalInvested) * 100).toFixed(1)
+
+  return (
+    <>
+      <AnimatePresence>
+        {activeStory !== null && (
+          <StoryViewer
+            stories={portfolioStories}
+            activeIndex={activeStory}
+            onClose={() => setActiveStory(null)}
+            onNext={() => activeStory < portfolioStories.length - 1 ? setActiveStory(activeStory + 1) : setActiveStory(null)}
+            onPrev={() => activeStory > 0 && setActiveStory(activeStory - 1)}
+          />
+        )}
+      </AnimatePresence>
+    <Page>
+      <motion.div variants={stagger.container} initial="hidden" animate="show">
+        {/* ─── Header ─── */}
+        <motion.div variants={stagger.item}>
+          <Dot color="var(--text)">Money</Dot>
+          <h1 style={{ fontSize: 28, fontWeight: 900, marginTop: 6, letterSpacing: -0.5 }}>Your Wealth</h1>
+        </motion.div>
+
+        {/* ─── Portfolio Stories ─── */}
+        <motion.div variants={stagger.item} style={{ marginTop: 12 }}>
+          <div style={{ marginBottom: 10 }}>
+            <span style={{ fontSize: 14, fontWeight: 700 }}>Portfolio Insights</span>
+            <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>Tap to explore</span>
+          </div>
+          <StoryRow stories={portfolioStories} onOpen={(i) => setActiveStory(i)} />
+        </motion.div>
+
+        {/* ─── Portfolio Hero — gradient card with sparkline ─── */}
+        <motion.div variants={stagger.item} style={{ marginTop: 16 }}>
+          <GradientCard from="#E8613A" to="#E88A3A">
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <div>
+                <Dot color="#fff" light style={{ color: 'rgba(255,255,255,0.7)' }}>Total Portfolio</Dot>
+                <div style={{ marginTop: 6 }}>
+                  <AnimNum value={totalCurrent} prefix="₹" style={{ fontSize: 46, color: '#fff', letterSpacing: -2.5 }} />
+                </div>
+              </div>
+              <Sparkline data={portfolioTrend} width={80} height={40} color="rgba(255,255,255,0.8)" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 14 }}>
+              {[
+                { label: 'Invested', val: `₹${(totalInvested / 100000).toFixed(1)}L` },
+                { label: 'Returns', val: `+₹${(totalReturn / 1000).toFixed(1)}K` },
+                { label: 'XIRR', val: `+${returnPct}%` },
+              ].map(s => (
+                <div key={s.label} style={{ padding: '8px 10px', background: 'rgba(255,255,255,0.15)', borderRadius: 10 }}>
+                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase' }}>{s.label}</div>
+                  <Num style={{ fontSize: 14, color: '#fff' }}>{s.val}</Num>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: 6 }}>
+               <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ADE80', boxShadow: '0 0 8px #4ADE80' }} />
+               <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>Beating Nifty 50 by <strong style={{color: '#fff'}}>+8.8%</strong></span>
+            </div>
+            
+            {/* Asset Mix Integrated */}
+            <div style={{ marginTop: 20 }}>
+               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', marginBottom: 8, fontWeight: 600 }}>ASSET MIX</div>
+               <SegmentBar segments={allocationSegs} height={10} gap={3} />
+               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4, marginTop: 12 }}>
+                  {allocationSegs.map(a => (
+                    <div key={a.label} style={{ textAlign: 'center' }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: a.color, margin: '0 auto 4px', border: '1px solid rgba(255,255,255,0.2)' }} />
+                      <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)' }}>{a.label}</div>
+                      <Num style={{ fontSize: 11, color: '#fff', display: 'block' }}>{a.value}%</Num>
+                    </div>
+                  ))}
+               </div>
+            </div>
+          </GradientCard>
+        </motion.div>
+
+        {/* ─── Gentle Nudge Card ─── */}
+        <motion.div variants={stagger.item} style={{ marginTop: 10 }}>
+          <Card onClick={() => setActiveStory(2)} style={{ padding: 16, cursor: 'pointer', borderLeft: '3px solid var(--blue)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ fontSize: 28 }}>⚖️</span>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, display: 'block' }}>Your portfolio wants to talk</span>
+                <span style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 2, display: 'block', lineHeight: 1.4 }}>Equity is 8% above target. Tap to see what your money thinks about rebalancing.</span>
+              </div>
+              <div style={{ fontSize: 10, color: 'var(--blue)', fontWeight: 700, padding: '4px 10px', background: 'rgba(91,173,228,0.1)', borderRadius: 100 }}>View</div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* ─── Tabs ─── */}
+        <motion.div variants={stagger.item}>
+          <div style={{ marginTop: 20 }}>
+            <PillGroup tabs={['Overview', 'Holdings', 'Goals']} active={tab} onChange={setTab} />
+          </div>
+        </motion.div>
+
+        <AnimatePresence mode="wait">
+          {/* ─── OVERVIEW TAB — horizontal scroll linked accounts ─── */}
+          {tab === 'Overview' && (
+            <motion.div key="overview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+              <SH title="Linked Accounts" sub={`${banks.length} accounts`} />
+              <ScrollRow gap={10}>
+                {banks.map(b => (
+                  <Card key={b.name} style={{ minWidth: 180, flex: 'none', scrollSnapAlign: 'start', padding: 14 }}>
+                    <span style={{ fontSize: 28, display: 'block', marginBottom: 8 }}>{b.icon}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, display: 'block' }}>{b.name}</span>
+                    <span style={{ fontSize: 10, color: 'var(--text-on-dark-3)', display: 'block', marginTop: 2 }}>{b.type}</span>
+                    <Num style={{ fontSize: 18, color: b.balance < 0 ? 'var(--red)' : 'var(--text-on-dark)', display: 'block', marginTop: 6 }}>
+                      {b.balance < 0 ? '-' : ''}₹{Math.abs(b.balance).toLocaleString()}
+                    </Num>
+                  </Card>
+                ))}
+              </ScrollRow>
+            </motion.div>
+          )}
+
+          {/* ─── HOLDINGS TAB — cards with mini sparklines ─── */}
+          {tab === 'Holdings' && (
+            <motion.div key="holdings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+              {holdings.map((h, idx) => {
+                const ret = h.current - h.invested
+                const retPct = ((ret / h.invested) * 100).toFixed(1)
+                return (
+                  <Card key={h.name} style={{ marginBottom: 8, padding: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      {/* Mini sparkline on the left */}
+                      <Sparkline data={h.trend} width={50} height={30} color={ret >= 0 ? 'var(--green)' : 'var(--red)'} gradient={false} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <h4 style={{ fontSize: 13, fontWeight: 700 }}>{h.name}</h4>
+                            <span style={{ fontSize: 10, color: 'var(--text-on-dark-3)' }}>{h.type}{h.sip > 0 ? ` • SIP ₹${h.sip.toLocaleString()}/mo` : ''}</span>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <Num style={{ fontSize: 18 }}>₹{h.current.toLocaleString()}</Num>
+                            <Num style={{ fontSize: 13, color: ret >= 0 ? 'var(--green)' : 'var(--red)', display: 'block' }}>
+                              {ret >= 0 ? '+' : ''}₹{ret.toLocaleString()} ({retPct}%)
+                            </Num>
+                          </div>
+                        </div>
+                        {/* Invested vs Current bar */}
+                        <div style={{ marginTop: 10 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                            <span style={{ fontSize: 9, color: 'var(--text-on-dark-3)' }}>Invested ₹{h.invested.toLocaleString()}</span>
+                            <span style={{ fontSize: 9, color: 'var(--text-on-dark-3)' }}>Current</span>
+                          </div>
+                          <div style={{ position: 'relative', height: 4, background: 'var(--card-2)', borderRadius: 100, overflow: 'hidden' }}>
+                            <motion.div initial={{ width: 0 }} animate={{ width: '100%' }}
+                              transition={{ duration: 0.6, delay: idx * 0.1 }}
+                              style={{ height: '100%', background: 'var(--card-3)', borderRadius: 100, position: 'absolute' }} />
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${(h.invested / h.current) * 100}%` }}
+                              transition={{ duration: 0.8, delay: 0.1 + idx * 0.1 }}
+                              style={{ height: '100%', background: 'var(--orange)', borderRadius: 100, position: 'absolute' }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                )
+              })}
+            </motion.div>
+          )}
+
+          {/* ─── GOALS TAB ─── */}
+          {tab === 'Goals' && (
+            <motion.div key="goals" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+              {goals.map(g => {
+                const pct = Math.round((g.current / g.target) * 100)
+                const remaining = g.target - g.current
+                return (
+                  <Card key={g.name} style={{ marginBottom: 10, padding: 16, display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    {/* Ring chart */}
+                    <Ring percent={pct} size={64} stroke={5} color={g.color}>
+                      <Num style={{ fontSize: 12 }}>{pct}%</Num>
+                    </Ring>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                        <span style={{ fontSize: 20 }}>{g.emoji}</span>
+                        <h4 style={{ fontSize: 14, fontWeight: 700 }}>{g.name}</h4>
+                      </div>
+                      <span style={{ fontSize: 10, color: 'var(--text-on-dark-3)' }}>Target by {g.deadline}</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                        <div>
+                          <Num style={{ fontSize: 16, color: g.color }}>₹{(g.current / 1000).toFixed(0)}K</Num>
+                          <div style={{ fontSize: 9, color: 'var(--text-on-dark-3)' }}>saved</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <Num style={{ fontSize: 16 }}>₹{(remaining / 1000).toFixed(0)}K</Num>
+                          <div style={{ fontSize: 9, color: 'var(--text-on-dark-3)' }}>to go</div>
+                        </div>
+                      </div>
+                      <div style={{ marginTop: 8, padding: '6px 10px', background: 'var(--card-2)', borderRadius: 8, fontSize: 10, color: 'var(--text-on-dark-2)' }}>
+                        💡 Need <strong style={{ color: 'var(--text-on-dark)' }}>₹{Math.round(remaining / 12 / 1000)}K/mo</strong> to reach goal on time
+                      </div>
+                    </div>
+                  </Card>
+                )
+              })}
+              <Btn full color="var(--dark)" style={{ marginTop: 4, border: '1px dashed var(--card-3)' }}>
+                <Target size={16} /> Add New Goal
+              </Btn>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </Page>
+    </>
+  )
+}
