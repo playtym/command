@@ -25,7 +25,7 @@ const quickTopics = [
     color: '#4F46E5',
     bg: '#EEF2FF',
     title: 'Optimize My Taxes',
-    subtitle: 'Save up to ₹33K this year',
+    subtitle: 'Save up to ₹33 K this year',
     context: "Help me find any unclaimed tax deductions I can still use this financial year — 80C, 80CCD, 80D etc.",
   },
   {
@@ -55,14 +55,95 @@ const suggestedPrompts = [
   "Should I increase my SIP amount?",
 ]
 
+
+/* ─── Context Cards (Injected into chat) ─── */
+const ContextCard = ({ data }) => {
+  if (!data) return null
+  return (
+    <div style={{ marginTop: 16, marginBottom: 4 }}>
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: 24,
+        padding: 24,
+        boxShadow: '0 12px 24px -6px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
+         {/* Background Gradient */}
+         <div style={{
+             position: 'absolute', top: 0, left: 0, right: 0, height: 6,
+             background: data.bg || '#F1F5F9'
+         }} />
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+           <div>
+              <div style={{ 
+                  fontSize: 12, fontWeight: 800, color: data.color, 
+                  textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 
+              }}>
+                  {data.label}
+              </div>
+              <h4 style={{ 
+                  fontSize: 22, fontWeight: 800, color: '#0F172A', 
+                  margin: 0, letterSpacing: -0.5, lineHeight: 1.1 
+              }}>
+                  {data.title}
+              </h4>
+           </div>
+        </div>
+
+        <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.5, fontWeight: 500, marginBottom: 20 }}>
+            {data.desc}
+        </p>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {data.impact && (
+                 <div style={{
+                    background: '#FEF08A', 
+                    border: '2px solid #0F172A',
+                    borderRadius: 12, padding: '6px 14px',
+                    fontSize: 14, fontWeight: 800, color: '#0F172A',
+                    boxShadow: '3px 3px 0px #0F172A',
+                    transform: 'rotate(-2deg)'
+                 }}>
+                    {data.impact}
+                 </div>
+            )}
+            
+            {data.cta && (
+                <button style={{
+                    background: '#0F172A', color: 'white',
+                    padding: '10px 20px', borderRadius: 100, border: 'none',
+                    fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8,
+                    cursor: 'pointer'
+                }}>
+                    {data.cta} <ArrowRight size={16} />
+                </button>
+            )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ─── Multi-Turn Chat Responses (2-3 levels deep) ─── */
 const chatFlows = {
   // ── Portfolio Health ──
   "Give me a quick health check of my investment portfolio — XIRR, allocation balance, and any risk flags.": {
     response: "Here's your portfolio snapshot:\n\n**XIRR:** 18.4% (Excellent — beating Nifty 50 by 3.2%)\n\n**Allocation:**\n• Equity: 60% (Flexi + Small Cap)\n• Gold: 20% (SGB 2028)\n• Short Term Debt: 12%\n• Liquid: 8%\n\n**Risk Flag:** Your Small Cap allocation is 24% — that's above the recommended 15% for your risk profile. Consider trimming ₹2L into a balanced fund.",
     suggestions: ["Should I trim Small Cap?", "Which balanced fund?", "Show me fund-wise XIRR"],
+    cardData: {
+        label: 'Critical Alert',
+        title: 'Your Equity\nis Risky!',
+        desc: 'You are 77% in stocks (Target 60%). Move ₹1.2 L to Debt before market falls.',
+        color: '#D97706',
+        bg: 'linear-gradient(90deg, #F59E0B, #D97706)',
+        impact: 'Reduce Risk',
+        cta: 'Rotate Now'
+    },
     followUps: {
       "Should I trim Small Cap?": {
+
         response: "Yes, at 24% Small Cap, you're overweight in a volatile asset class. Here's my plan:\n\n**Step 1:** Sell ₹2L from Quant Small Cap (it has +64% gains, good time to book partial profits)\n**Step 2:** Move ₹1.2L → HDFC Balanced Advantage Fund\n**Step 3:** Move ₹0.8L → Liquid Fund (top up emergency)\n\nThis brings Small Cap to ~17% and boosts your safety cushion. Tax impact is minimal — LTCG of ~₹6,000 (₹625 tax).",
         suggestions: ["Execute this plan", "What about tax on this?"],
         followUps: {
@@ -111,6 +192,15 @@ const chatFlows = {
   "Do a full audit of my monthly spending — categorize it, flag overspends, and suggest savings.": {
     response: "Here's your February spending audit:\n\n**Total Spend: ₹27,440** (61% of ₹45K limit)\n\n📊 **Breakdown:**\n• 🍔 Food Delivery: ₹8,420 (⚠️ 37% over budget)\n• 🚗 Transport: ₹4,200 (On track)\n• 🛍️ Shopping: ₹5,600 (⚠️ Overspend)\n• ☕ Dining Out: ₹3,800 (Moderate)\n• 🏠 Bills & Utilities: ₹2,840 (Normal)\n• 📱 Subscriptions: ₹2,580 (4 active)\n\n**Savings Potential: ₹4,200/month** by fixing Food & Shopping.",
     suggestions: ["Fix my food spending", "Audit my subscriptions", "Which card for dining?"],
+    cardData: {
+        label: 'Spending',
+        title: 'Cut Zomato\nby 20%',
+        desc: 'You spent ₹8.4 K this month. Cap it at ₹1.5 K/week to save ₹24 K/yr.',
+        color: '#ea580c',
+        bg: 'linear-gradient(90deg, #F97316, #EA580C)',
+        impact: '₹24,000/yr',
+        cta: 'Set Limit'
+    },
     followUps: {
       "Fix my food spending": {
         response: "Your Zomato/Swiggy bill has crept up 32% in 3 months:\n\n**Trend:**\n• Nov: ₹5,100\n• Dec: ₹5,800\n• Jan: ₹6,380\n• Feb: ₹8,420 ← Here now\n\n**My Plan:**\n1. **Weekly cap:** ₹1,500/week (₹6,000/mo)\n2. **Hack:** Use Swiggy One (₹149/mo) — saves ~₹800 in delivery fees\n3. **Awareness:** I'll send you a nudge when you cross ₹1.5K any week\n\n**Annual saving: ₹24,000** if you stick to the cap. That's an extra SIP!",
@@ -246,7 +336,13 @@ export default function Advisor() {
         if (flow) {
           setMessages([
             { role: 'user', text: prompt, isHidden: true },
-            { role: 'ai', text: flow.response, suggestions: flow.suggestions, flowKey: prompt }
+            { 
+                role: 'ai', 
+                text: flow.response, 
+                suggestions: flow.suggestions, 
+                flowKey: prompt,
+                cardData: flow.cardData 
+            }
           ])
         } else {
           setMessages([
@@ -276,8 +372,11 @@ export default function Advisor() {
       const directFlow = chatFlows[text]
       if (directFlow) {
         setMessages(prev => [...prev, { 
-          role: 'ai', text: directFlow.response, 
-          suggestions: directFlow.suggestions, flowKey: text 
+          role: 'ai', 
+          text: directFlow.response, 
+          suggestions: directFlow.suggestions, 
+          flowKey: text,
+          cardData: directFlow.cardData
         }])
         setIsTyping(false)
         return
@@ -290,9 +389,11 @@ export default function Advisor() {
         if (parentFlow?.followUps?.[text]) {
           const followUp = parentFlow.followUps[text]
           setMessages(prev => [...prev, { 
-            role: 'ai', text: followUp.response, 
+            role: 'ai', 
+            text: followUp.response, 
             suggestions: followUp.suggestions,
-            flowKey: lastAiMsg.flowKey // maintain parent for deeper lookups
+            flowKey: lastAiMsg.flowKey, // maintain parent for deeper lookups
+            cardData: followUp.cardData
           }])
           setIsTyping(false)
           return
@@ -304,9 +405,11 @@ export default function Advisor() {
         if (flow.followUps?.[text]) {
           const followUp = flow.followUps[text]
           setMessages(prev => [...prev, { 
-            role: 'ai', text: followUp.response, 
+            role: 'ai', 
+            text: followUp.response, 
             suggestions: followUp.suggestions,
-            flowKey: key
+            flowKey: key,
+            cardData: followUp.cardData
           }])
           setIsTyping(false)
           return
@@ -317,8 +420,10 @@ export default function Advisor() {
             if (fFlow.followUps?.[text]) {
               const deepFollowUp = fFlow.followUps[text]
               setMessages(prev => [...prev, { 
-                role: 'ai', text: deepFollowUp.response, 
-                suggestions: deepFollowUp.suggestions 
+                role: 'ai', 
+                text: deepFollowUp.response, 
+                suggestions: deepFollowUp.suggestions,
+                cardData: deepFollowUp.cardData
               }])
               setIsTyping(false)
               return
@@ -357,12 +462,13 @@ export default function Advisor() {
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 140px)' }}>
         
         {/* ─── Header ─── */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24, flexShrink: 0, paddingLeft: 4 }}>
           {hasStartedChat && (
-            <button 
+            <motion.button 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               onClick={() => {
                 if (activeCard && !activeItem) {
-                  // Came from topic card, go back to landing
                   setActiveCard(null)
                   setMessages([])
                   setHasStartedChat(false)
@@ -371,35 +477,34 @@ export default function Advisor() {
                 }
               }}
               style={{ 
-                background: 'white', border: '1px solid #E2E8F0', borderRadius: '50%', 
-                width: 40, height: 40, cursor: 'pointer', marginRight: 16, 
+                background: 'white', border: '1px solid #F1F5F9', borderRadius: 16, 
+                width: 44, height: 44, cursor: 'pointer', marginRight: 16, 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B',
-                flexShrink: 0
+                flexShrink: 0,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
               }}
             >
               <ChevronLeft size={24} />
-            </button>
+            </motion.button>
           )}
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-              {hasStartedChat ? 'Advisor' : 'AI Advisor'}
-            </h1>
-            <span style={{ fontSize: 13, color: '#64748B' }}>
-              {hasStartedChat && activeCard
-                ? <>Helping with <span style={{ fontWeight: 600, color: '#4F46E5' }}>{activeCard.title}</span></>
-                : hasStartedChat 
-                  ? 'Analyzing your finances'
-                  : 'What can I help you with?'
-              }
-            </span>
+            {/* Standard Header Removed to focus on the big Greeting when not chatting */}
+            {hasStartedChat && (
+              <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: -0.5 }}>
+                Advisor
+              </h1>
+            )}
+            {hasStartedChat && (
+              <span style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>
+               {activeCard ? <>Helping with <span style={{ fontWeight: 700, color: '#4F46E5' }}>{activeCard.title}</span></> : 'Analyzing your finances'}
+              </span>
+            )}
           </div>
-          <div style={{ padding: 8, background: '#EEF2FF', borderRadius: 12, flexShrink: 0 }}>
-            <Sparkles size={20} color="#4F46E5" fill="#4F46E5" />
-          </div>
+          {/* Header Icon Removed as per request */}
         </div>
 
         {/* ─── MAIN CONTENT ─── */}
-        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 20 }} className="hide-scroll">
+        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 100 }} className="hide-scroll">
           
           {!hasStartedChat ? (
             /* ─── DEFAULT LANDING (No card selected) ─── */
@@ -409,127 +514,65 @@ export default function Advisor() {
               transition={{ duration: 0.5 }}
             >
               {/* Greeting */}
-              <div style={{ 
-                textAlign: 'center', padding: '20px 0 32px', 
-              }}>
-                <div style={{ 
-                  width: 64, height: 64, borderRadius: 20, 
-                  background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto 16px', boxShadow: '0 8px 24px rgba(79, 70, 229, 0.3)'
+              <div style={{ padding: '24px 8px 32px' }}>
+                <h2 style={{ 
+                  fontSize: 42, fontWeight: 900, color: '#0F172A', 
+                  marginBottom: 12, letterSpacing: -2, lineHeight: 1 
                 }}>
-                  <Sparkles size={32} color="white" />
-                </div>
-                <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>
-                  Hi Ankur, how can I help?
+                  Hi Ankur.
                 </h2>
-                <p style={{ fontSize: 14, color: '#64748B', maxWidth: 280, margin: '0 auto' }}>
-                  I can analyze your portfolio, audit spending, plan taxes, and more.
-                </p>
+                <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4 }} className="hide-scroll">
+                    {['Portfolio', 'Tax', 'Spending', 'Goals'].map((tag, i) => (
+                        <div key={i} style={{ 
+                            padding: '8px 16px', borderRadius: 100, 
+                            border: '1px solid #E2E8F0', color: '#64748B', fontWeight: 600, fontSize: 14 
+                        }}>
+                            {tag}
+                        </div>
+                    ))}
+                </div>
               </div>
 
-              {/* Quick Topic Cards */}
-              <div style={{ marginBottom: 28 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12, padding: '0 4px' }}>
-                  Quick Actions
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {/* Minimal Topic List */}
+              <div style={{ padding: '0 4px', display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {quickTopics.map((topic) => (
                     <motion.div
                       key={topic.id}
-                      whileTap={{ scale: 0.97 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => handleTopicClick(topic)}
                       style={{
-                        background: topic.bg,
+                        background: '#FFFFFF',
                         borderRadius: 20,
-                        padding: 18,
+                        padding: '20px',
                         cursor: 'pointer',
-                        border: '1px solid rgba(0,0,0,0.03)',
+                        display: 'flex', alignItems: 'center', gap: 20,
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)'
                       }}
                     >
                       <div style={{ 
-                        width: 40, height: 40, borderRadius: 12, background: 'white',
+                        width: 44, height: 44, borderRadius: 14, 
+                        background: topic.bg,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: topic.color, marginBottom: 12,
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                        color: topic.color
                       }}>
-                        <topic.icon size={20} />
+                        <topic.icon size={22} strokeWidth={2.5} />
                       </div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 4 }}>
-                        {topic.title}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{topic.title}</div>
+                        <div style={{ fontSize: 14, color: '#64748B' }}>{topic.subtitle}</div>
                       </div>
-                      <div style={{ fontSize: 12, color: '#64748B', lineHeight: 1.3 }}>
-                        {topic.subtitle}
-                      </div>
+                      <div style={{ color: '#CBD5E1' }}><ArrowRight size={20} /></div>
                     </motion.div>
                   ))}
-                </div>
               </div>
 
-              {/* Suggested Prompts */}
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12, padding: '0 4px' }}>
-                  Try asking
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {suggestedPrompts.map((prompt, i) => (
-                    <motion.div
-                      key={i}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleUserMessage(prompt)}
-                      style={{
-                        background: 'white',
-                        borderRadius: 16,
-                        padding: '14px 18px',
-                        cursor: 'pointer',
-                        border: '1px solid #E2E8F0',
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      }}
-                    >
-                      <span style={{ fontSize: 14, color: '#374151', fontWeight: 500 }}>{prompt}</span>
-                      <ArrowRight size={16} color="#94A3B8" />
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+              {/* Removed Suggested Prompts section to reduce noise */}
             </motion.div>
           ) : (
             /* ─── CHAT VIEW ─── */
-            <div>
-              {/* Active Card (if present) */}
-              {activeCard && (
-                <motion.div 
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  style={{ marginBottom: 24 }}
-                >
-                  <div style={{ 
-                    background: activeCard.bg, 
-                    borderRadius: 20, 
-                    padding: 20, 
-                    border: '1px solid rgba(0,0,0,0.05)',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <div style={{ 
-                        width: 44, height: 44, borderRadius: 14, background: 'white',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: activeCard.color || '#4F46E5',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)', flexShrink: 0
-                      }}>
-                        {activeCard.icon ? <activeCard.icon size={22} /> : <Sparkles size={22} />}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: '#1E293B' }}>{activeCard.title}</div>
-                        <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>
-                          {activeCard.desc || activeCard.subtitle}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+            <div style={{ padding: '0 4px' }}>
+              
+              {/* Removed large 'Active Card' block to declutter. Relying on Header for context. */}
 
               {/* Messages */}
               <div style={{ padding: '0 2px' }}>
@@ -539,41 +582,48 @@ export default function Advisor() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35 }}
-                    style={{ marginBottom: 20 }}
+                    style={{ marginBottom: 24 }}
                   >
                     {msg.role === 'ai' ? (
                       <div style={{ display: 'flex', gap: 12 }}>
+                        {/* Minimal AI Icon */}
                         <div style={{ 
-                          minWidth: 30, height: 30, borderRadius: '50%', background: '#4F46E5', 
+                          width: 28, height: 28, borderRadius: 8, 
+                          background: '#F1F5F9',
                           display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                          marginTop: 2, flexShrink: 0
+                          marginTop: 4, flexShrink: 0
                         }}>
-                          <Sparkles size={14} color="white" />
+                          <Sparkles size={16} color="#4F46E5" strokeWidth={2.5} />
                         </div>
+                        
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ 
-                            fontSize: 15, color: '#374151', lineHeight: 1.65, whiteSpace: 'pre-line',
-                            background: '#F8FAFC', borderRadius: '4px 18px 18px 18px', padding: '14px 18px',
-                            border: '1px solid #F1F5F9'
+                            fontSize: 16, color: '#334155', lineHeight: 1.6, whiteSpace: 'pre-line',
+                            // Removed bubble background for a cleaner "text-first" look, or keep it very subtle
                           }}>
                             {msg.text.split('**').map((part, j) => 
-                              j % 2 === 1 ? <strong key={j} style={{ color: '#0F172A' }}>{part}</strong> : part
+                              j % 2 === 1 ? <strong key={j} style={{ color: '#0F172A', fontWeight: 700 }}>{part}</strong> : part
                             )}
                           </div>
                           
-                          {/* Suggestion Chips */}
+                          {/* Context Card (if any) - Kept but margin adjusted */}
+                          <ContextCard data={msg.cardData} />
+
+                          {/* Suggestion Chips - Simplified */}
                           {msg.suggestions && !isTyping && i === messages.length - 1 && (
-                            <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
                               {msg.suggestions.map((s, j) => (
                                 <motion.button
                                   key={j}
-                                  whileTap={{ scale: 0.95 }}
+                                  whileTap={{ scale: 0.96 }}
                                   onClick={() => handleSuggestionClick(s)}
                                   style={{ 
-                                    border: '1px solid #E2E8F0', background: 'white', 
-                                    padding: '8px 16px', borderRadius: 100,
-                                    fontSize: 13, fontWeight: 600, color: '#374151', cursor: 'pointer',
-                                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                                    border: '1px solid #E2E8F0', 
+                                    background: 'white', 
+                                    padding: '8px 16px', 
+                                    borderRadius: 100,
+                                    fontSize: 13, fontWeight: 600, color: '#475569', 
+                                    cursor: 'pointer',
                                   }}
                                 >
                                   {s}
@@ -584,11 +634,12 @@ export default function Advisor() {
                         </div>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
                         <div style={{ 
-                          background: '#0F172A', color: 'white', padding: '10px 18px', 
-                          borderRadius: '18px 18px 4px 18px', fontSize: 15, maxWidth: '85%',
-                          lineHeight: 1.5
+                          background: '#F1F5F9', color: '#0F172A', padding: '12px 20px', 
+                          borderRadius: '20px 20px 4px 20px', fontSize: 16, maxWidth: '85%',
+                          lineHeight: 1.5,
+                          fontWeight: 500
                         }}>
                           {msg.text}
                         </div>
@@ -601,25 +652,29 @@ export default function Advisor() {
                 {isTyping && (
                   <motion.div 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    style={{ display: 'flex', gap: 12, marginBottom: 20 }}
+                    style={{ display: 'flex', gap: 16, marginBottom: 24 }}
                   >
                     <div style={{ 
-                      minWidth: 30, height: 30, borderRadius: '50%', background: '#4F46E5',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                      width: 36, height: 36, borderRadius: 14, 
+                      background: 'linear-gradient(135deg, #4F46E5, #7C3AED)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)'
                     }}>
-                      <Sparkles size={14} color="white" />
+                      <Sparkles size={18} color="white" />
                     </div>
                     <div style={{ 
-                      background: '#F8FAFC', borderRadius: '4px 18px 18px 18px', 
-                      padding: '14px 18px', border: '1px solid #F1F5F9',
-                      display: 'flex', gap: 6, alignItems: 'center'
+                      background: '#FFFFFF', borderRadius: '4px 24px 24px 24px', 
+                      padding: '16px 24px', 
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.03), 0 0 0 1px rgba(0,0,0,0.03)',
+                      display: 'flex', gap: 6, alignItems: 'center',
+                      minHeight: 50
                     }}>
                       {[0, 1, 2].map(j => (
                         <motion.div
                           key={j}
-                          animate={{ opacity: [0.3, 1, 0.3] }}
+                          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.1, 1] }}
                           transition={{ duration: 1.2, repeat: Infinity, delay: j * 0.2 }}
-                          style={{ width: 7, height: 7, borderRadius: '50%', background: '#94A3B8' }}
+                          style={{ width: 8, height: 8, borderRadius: '50%', background: '#64748B' }}
                         />
                       ))}
                     </div>
@@ -631,35 +686,42 @@ export default function Advisor() {
 
               {/* Pending items from navigation */}
               {pendingItems.length > 0 && (
-                <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #F1F5F9' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
-                    Other Actions ({pendingItems.length})
+                <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #E2E8F0' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 16, paddingLeft: 4 }}>
+                    Also analyze
                   </div>
-                  <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }} className="hide-scroll">
+                  <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, paddingLeft: 2 }} className="hide-scroll">
                     {pendingItems.map(item => (
-                      <div 
+                      <motion.div 
                         key={item.id}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => {
                           setActiveCard(item)
                           setMessages([])
                         }}
                         style={{ 
-                          minWidth: 180, background: item.bg, padding: 12, borderRadius: 14,
-                          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
-                          border: '1px solid rgba(0,0,0,0.04)',
+                          minWidth: 200, background: 'white', padding: 14, borderRadius: 18,
+                          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.03), 0 0 0 1px rgba(0,0,0,0.03)',
+                          border: `1px solid ${item.color}20` // Subtle hint of color
                         }}
                       >
                         <div style={{ 
-                          width: 30, height: 30, borderRadius: 8, background: 'white',
+                          width: 36, height: 36, borderRadius: 12, background: `${item.color}15`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           color: item.color || '#4F46E5', flexShrink: 0
                         }}>
-                          {item.icon ? <item.icon size={14} /> : <Sparkles size={14} />}
+                          {item.icon ? <item.icon size={18} strokeWidth={2.5} /> : <Sparkles size={18} />}
                         </div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1E293B', lineHeight: 1.3 }}>
-                          {item.title}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1E293B', lineHeight: 1.3, marginBottom: 2 }}>
+                            {item.title}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#64748B', fontWeight: 500 }}>
+                            Tap to view
+                          </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
@@ -671,46 +733,48 @@ export default function Advisor() {
         {/* ─── INPUT BAR (Always visible) ─── */}
         <div style={{ 
           position: 'fixed', 
-          bottom: 72, 
+          bottom: 80, 
           left: '50%', 
           transform: 'translateX(-50%)',
-          width: '100%', 
-          maxWidth: 430, 
-          padding: '12px 20px',
-          background: 'rgba(255,255,255,0.95)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderTop: '1px solid rgba(0,0,0,0.06)',
+          width: 'calc(100% - 32px)', 
+          maxWidth: 400, 
           zIndex: 50
         }}>
           <div style={{ 
-            display: 'flex', alignItems: 'center', gap: 10,
-            background: '#F1F5F9', borderRadius: 16, padding: '6px 6px 6px 18px',
-            border: '1px solid #E2E8F0',
+            display: 'flex', alignItems: 'center', gap: 12,
+            background: 'rgba(255, 255, 255, 0.9)', 
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderRadius: 24, 
+            padding: '8px 8px 8px 20px',
+            boxShadow: '0 20px 40px -6px rgba(0,0,0,0.12), 0 8px 16px -4px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.4) inset',
+            border: '1px solid rgba(255,255,255,0.6)'
           }}>
             <input
               ref={inputRef}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
-              placeholder="Ask anything about your money..."
+              placeholder="Ask Advisor..."
               style={{
                 flex: 1, border: 'none', outline: 'none', background: 'transparent',
-                fontSize: 15, color: '#0F172A', fontFamily: 'inherit',
+                fontSize: 16, color: '#0F172A', fontWeight: 500, fontFamily: 'inherit',
+                minWidth: 0
               }}
             />
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleSend}
               style={{
-                width: 40, height: 40, borderRadius: 12,
-                background: input.trim() ? '#0F172A' : '#CBD5E1',
+                width: 44, height: 44, borderRadius: 18,
+                background: input.trim() ? '#0F172A' : '#E2E8F0',
                 border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background 0.2s',
+                boxShadow: input.trim() ? '0 4px 12px rgba(15, 23, 42, 0.3)' : 'none'
               }}
             >
-              <Send size={18} color="white" />
+              <Send size={20} color={input.trim() ? 'white' : '#94A3B8'} strokeWidth={2.5} />
             </motion.button>
           </div>
         </div>

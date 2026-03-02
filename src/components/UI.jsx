@@ -9,11 +9,11 @@ export const stagger = {
 }
 
 /* ═══════ PAGE WRAPPER ═══════ */
-export function Page({ children }) {
+export function Page({ children, bg = '#FFFFFF', paddingTop }) {
   return (
     <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      style={{ padding: '20px 20px 120px', minHeight: '100vh', background: 'var(--bg)' }}>
+      style={{ padding: `${paddingTop || 20}px 20px 120px`, minHeight: '100vh', background: bg }}>
       {children}
     </motion.div>
   )

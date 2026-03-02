@@ -33,7 +33,7 @@ const challenges = [
 const milestones = [
   { id: 1, name: 'First SIP', date: 'Oct 2025', earned: true },
   { id: 2, name: 'Budget Pro', date: 'Jan 2026', earned: true },
-  { id: 3, name: 'Net Worth ₹5L', date: 'Pending', earned: false },
+  { id: 3, name: 'Net Worth ₹5 L', date: 'Pending', earned: false },
 ]
 
 export default function Rewards() {
@@ -42,22 +42,22 @@ export default function Rewards() {
   const points = 1850
 
   return (
-    <Page>
+    <Page paddingTop={60}>
       {/* ─── Header ─── */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        style={{ marginBottom: 32, padding: '0 4px' }}
+        style={{ marginBottom: 32 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#F59E0B' }} />
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#D97706' }} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#57534E', textTransform: 'uppercase', letterSpacing: 1.5 }}>
             Status
           </span>
         </div>
-        <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: -1, color: '#0F172A' }}>
-          Your Progress
+        <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: -2, color: '#1C1917', lineHeight: 1 }}>
+          Progress<span style={{ color: '#D97706' }}>.</span>
         </h1>
       </motion.div>
 
@@ -69,21 +69,28 @@ export default function Rewards() {
         style={{ perspective: 1000 }}
       >
         <div style={{ 
-          background: 'linear-gradient(135deg, #FDE68A 0%, #D97706 100%)', 
-          borderRadius: 24, 
-          padding: 28, 
+          background: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', 
+          borderRadius: 32, 
+          padding: 32, 
           color: '#78350F', 
           position: 'relative', 
           overflow: 'hidden',
-          boxShadow: '0 20px 40px -10px rgba(217, 119, 6, 0.5), 0 0 0 1px rgba(0,0,0,0.05)',
-          minHeight: 220,
+          boxShadow: '0 25px 50px -12px rgba(245, 158, 11, 0.4)',
+          minHeight: 240,
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
         }}>
-           {/* Shimmer Effect */}
+           {/* Shimmer/Pattern Effect */}
            <div style={{
               position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%',
-              background: 'linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%)',
+              background: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 10px)',
               transform: 'rotate(30deg)',
+              pointerEvents: 'none',
+              opacity: 0.5
+           }} />
+           
+           <div style={{
+              position: 'absolute', top: 0, right: 0, width: 200, height: 200,
+              background: 'radial-gradient(circle at top right, rgba(255,255,255,0.4), transparent 70%)',
               pointerEvents: 'none',
            }} />
 
@@ -91,46 +98,35 @@ export default function Rewards() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 2 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <div style={{ 
-                      padding: '4px 10px', background: 'rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)', 
-                      borderRadius: 100, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1,
-                      border: '1px solid rgba(255,255,255,0.4)', color: '#78350F'
+                      padding: '6px 14px', background: 'rgba(255,255,255,0.25)', backdropFilter: 'blur(12px)', 
+                      borderRadius: 100, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1,
+                      border: '1px solid rgba(255,255,255,0.5)', color: '#78350F',
+                      boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
                   }}>
                     Gold Member
                   </div>
               </div>
-              <Crown size={28} color="#92400E" strokeWidth={1.5} />
-            </div>
-
-            {/* Chip & Contactless */}
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginTop: 24, position: 'relative', zIndex: 2 }}>
-                <div style={{ 
-                    width: 44, height: 34, background: 'linear-gradient(135deg, #FCD34D 0%, #B45309 100%)', 
-                    borderRadius: 6, border: '1px solid rgba(0,0,0,0.1)', position: 'relative' 
-                }}>
-                    <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 1, background: 'rgba(0,0,0,0.1)' }} />
-                    <div style={{ position: 'absolute', top: 0, bottom: 0, left: '33%', width: 1, background: 'rgba(0,0,0,0.1)' }} />
-                    <div style={{ position: 'absolute', top: 0, bottom: 0, right: '33%', width: 1, background: 'rgba(0,0,0,0.1)' }} />
-                </div>
-                <Zap size={24} style={{ transform: 'rotate(15deg)', opacity: 0.6 }} />
+              <Crown size={32} color="#78350F" strokeWidth={2} />
             </div>
 
             {/* Middle Numbers */}
             <div style={{ 
-                fontSize: 22, fontFamily: 'monospace', fontWeight: 600, letterSpacing: 3, 
-                marginTop: 24, textShadow: '0 1px 0 rgba(255,255,255,0.4)', position: 'relative', zIndex: 2 
+                fontSize: 26, fontFamily: 'monospace', fontWeight: 700, letterSpacing: 4, 
+                marginTop: 32, textShadow: '0 1px 0 rgba(255,255,255,0.3)', position: 'relative', zIndex: 2,
+                color: '#451A03'
             }}>
                 •••• •••• •••• 7821
             </div>
 
             {/* Bottom Details */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative', zIndex: 2 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative', zIndex: 2, marginTop: 'auto' }}>
                 <div>
-                    <div style={{ fontSize: 9, textTransform: 'uppercase', opacity: 0.8, fontWeight: 600, marginBottom: 2 }}>Card Holder</div>
-                    <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0.5 }}>ANKUR GARG</div>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', opacity: 0.8, fontWeight: 700, marginBottom: 4, color: '#451A03' }}>Card Holder</div>
+                    <div style={{ fontSize: 17, fontWeight: 800, letterSpacing: 0.5, color: '#451A03' }}>ANKUR GARG</div>
                 </div>
                  <div>
-                    <div style={{ fontSize: 9, textTransform: 'uppercase', opacity: 0.8, fontWeight: 600, marginBottom: 2 }}>Expires</div>
-                    <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: 0.5 }}>09/29</div>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', opacity: 0.8, fontWeight: 700, marginBottom: 4, color: '#451A03', textAlign: 'right' }}>Expires</div>
+                    <div style={{ fontSize: 17, fontWeight: 800, letterSpacing: 0.5, color: '#451A03' }}>09/29</div>
                 </div>
             </div>
         </div>
@@ -141,24 +137,24 @@ export default function Rewards() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        style={{ marginTop: 24, padding: '0 8px' }}
+        style={{ marginTop: 32 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>Progress to <span style={{ color: '#0F172A' }}>Platinum</span></span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>150 pts left</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#78716C' }}>Progress to <span style={{ color: '#1C1917', fontWeight: 900 }}>Platinum</span></span>
+            <span style={{ fontSize: 13, fontWeight: 800, color: '#D97706' }}>150 pts left</span>
         </div>
-        <div style={{ height: 8, background: '#E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ height: 12, background: '#F5F5F4', borderRadius: 6, overflow: 'hidden' }}>
             <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: '85%' }}
                 transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
-                style={{ height: '100%', background: 'linear-gradient(90deg, #F59E0B, #D97706)', borderRadius: 10 }}
+                style={{ height: '100%', background: 'linear-gradient(90deg, #F59E0B, #EA580C)', borderRadius: 6 }}
             />
         </div>
 
         {/* Platinum Benefits */}
-        <div style={{ marginTop: 20 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', marginBottom: 12, letterSpacing: 0.5 }}>
+        <div style={{ marginTop: 24 }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: '#78716C', textTransform: 'uppercase', marginBottom: 16, letterSpacing: 1.5 }}>
                 Platinum Unlocks
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4 }} className="hide-scroll">
@@ -170,15 +166,15 @@ export default function Rewards() {
                 ].map((benefit, i) => (
                     <div key={i} style={{ 
                         display: 'flex', flexDirection: 'column',
-                        background: 'white', padding: '12px 16px', borderRadius: 16, 
-                        border: '1px solid #E2E8F0', minWidth: 140,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+                        background: 'white', padding: '16px 20px', borderRadius: 24, 
+                        border: 'none', minWidth: 150,
+                        boxShadow: '0 4px 20px -4px rgba(0,0,0,0.06)'
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                            <benefit.icon size={14} color="#4F46E5" />
-                            <span style={{ fontSize: 12, fontWeight: 700, color: '#1E293B' }}>{benefit.label}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                            <benefit.icon size={16} color="#4F46E5" strokeWidth={2.5} />
+                            <span style={{ fontSize: 13, fontWeight: 800, color: '#1C1917' }}>{benefit.label}</span>
                         </div>
-                        <div style={{ fontSize: 11, color: '#64748B' }}>{benefit.sub}</div>
+                        <div style={{ fontSize: 12, color: '#78716C', fontWeight: 600 }}>{benefit.sub}</div>
                     </div>
                 ))}
             </div>
@@ -192,57 +188,61 @@ export default function Rewards() {
         transition={{ duration: 0.5, delay: 0.2 }}
         style={{ marginTop: 32 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#78716C', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Active Challenges
           </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#6366F1', fontSize: 12, fontWeight: 600 }}>
-            <Sparkles size={12} />
-            <span>AI Coach</span>
-          </div>
         </div>
 
-        <ScrollRow gap={12}>
+        <ScrollRow gap={20}>
           {challenges.map((item, i) => (
             <div 
               key={i}
               style={{ 
-                minWidth: 260, 
+                minWidth: 280, 
                 scrollSnapAlign: 'center',
-                background: item.bg,
-                borderRadius: 24,
-                padding: 20,
-                border: '1px solid rgba(0,0,0,0.03)',
-                boxShadow: 'none',
+                background: '#FFFFFF',
+                borderRadius: 32,
+                padding: 24,
+                border: 'none',
+                boxShadow: `0 24px 48px -12px ${item.color}15, 0 0 0 1px rgba(0,0,0,0.03)`,
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                cursor: 'pointer'
               }}
               onClick={() => navigate('/advisor', { state: { initialQuery: item.context } })}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                <div style={{ 
-                  width: 44, height: 44, borderRadius: 14, 
-                  background: 'white', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: item.color,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-                }}>
-                  <item.icon size={22} />
-                </div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: item.color, background: 'white', padding: '4px 8px', borderRadius: 6 }}>
-                  {item.benefit}
-                </div>
+              {/* Glow */}
+              <div style={{
+                  position: 'absolute', top: -60, right: -60, width: 160, height: 160,
+                  borderRadius: '50%', background: item.color,
+                  filter: 'blur(60px)', opacity: 0.1,
+                  pointerEvents: 'none'
+              }} />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+                 <div style={{ 
+                    fontSize: 11, fontWeight: 800, color: item.color, textTransform: 'uppercase', letterSpacing: 1.5,
+                    background: `${item.color}15`, padding: '6px 12px', borderRadius: 100
+                }}>{item.benefit}</div>
+                 <div style={{ 
+                   width: 44, height: 44, borderRadius: 14, 
+                   background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                   color: item.color, boxShadow: '0 8px 16px -4px rgba(0,0,0,0.08)'
+                 }}>
+                   <item.icon size={22} strokeWidth={2.5} />
+                 </div>
               </div>
               
-              <h4 style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{item.title}</h4>
-              <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.4, marginBottom: 20, fontWeight: 500 }}>{item.subtitle}</p>
+              <h4 style={{ fontSize: 24, fontWeight: 900, color: '#0F172A', marginBottom: 8, letterSpacing: -1, lineHeight: 1.1 }}>{item.title}</h4>
+              <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.5, marginBottom: 24, fontWeight: 600 }}>{item.subtitle}</p>
 
               <button style={{ 
                 display: 'flex', alignItems: 'center', gap: 8,
-                fontSize: 13, fontWeight: 700, color: item.color,
-                background: 'transparent', border: 'none', padding: 0
+                fontSize: 14, fontWeight: 800, color: item.color,
+                background: 'transparent', border: 'none', padding: 0, cursor: 'pointer'
               }}>
-                View Progress <ChevronRight size={14} />
+                View Progress <ChevronRight size={18} strokeWidth={3} />
               </button>
             </div>
           ))}
@@ -256,37 +256,37 @@ export default function Rewards() {
         transition={{ duration: 0.5, delay: 0.3 }}
         style={{ marginTop: 32, marginBottom: 120 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#78716C', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Milestones
           </h3>
         </div>
 
-        <div style={{ background: 'white', borderRadius: 20, padding: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.02)', border: '1px solid #F1F5F9' }}>
+        <div style={{ background: 'white', borderRadius: 28, padding: 8, boxShadow: '0 4px 20px -4px rgba(0,0,0,0.06)', border: 'none' }}>
           {milestones.map((m, i) => (
             <div key={m.id} style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-              padding: '16px 12px',
-              borderBottom: i < milestones.length - 1 ? '1px solid #F1F5F9' : 'none',
+              padding: '18px 16px',
+              borderBottom: i < milestones.length - 1 ? '1px solid #F5F5F4' : 'none',
               opacity: m.earned ? 1 : 0.5
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{ 
-                  width: 40, height: 40, borderRadius: 12, 
-                  background: m.earned ? '#ECFDF5' : '#F1F5F9', 
+                  width: 44, height: 44, borderRadius: 14, 
+                  background: m.earned ? '#ECFDF5' : '#F5F5F4', 
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: m.earned ? '#10B981' : '#94A3B8'
+                  color: m.earned ? '#059669' : '#A8A29E'
                 }}>
-                  {m.earned ? <CheckCircle2 size={20} /> : <Trophy size={20} />}
+                  {m.earned ? <CheckCircle2 size={22} strokeWidth={2.5} /> : <Trophy size={22} strokeWidth={2.5} />}
                 </div>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>{m.name}</div>
-                  <div style={{ fontSize: 12, color: '#94A3B8' }}>{m.date}</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#1C1917', letterSpacing: -0.3 }}>{m.name}</div>
+                  <div style={{ fontSize: 13, color: '#78716C', fontWeight: 600 }}>{m.date}</div>
                 </div>
               </div>
               {m.earned && (
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#10B981', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  Unlocked <Sparkles size={12} />
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  Unlocked
                 </div>
               )}
             </div>

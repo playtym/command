@@ -17,43 +17,45 @@ const urgentItems = [
   { 
     id: 1,
     icon: Shield, 
-    color: '#EF4444', 
-    bgColor: '#EFF6FF',
+    color: '#064E3B', 
+    bgColor: '#ECFDF5',
     title: 'Insurance Expiring', 
     subtitle: 'Renew Creta policy',
     action: 'Due in 12d',
-    amount: '₹18,400',
+    amount: '₹18.4 k',
     context: "My car insurance for the Creta is expiring in 12 days. The renewal quote is ₹18,400. Should I stick with this or look for better options?"
   },
   { 
     id: 2,
     icon: Zap, 
-    color: '#F59E0B',
-    bgColor: '#FFFBEB',
+    color: '#7C2D12',
+    bgColor: '#FFEDD5',
     title: 'Electricity Bill', 
     subtitle: 'BESCOM • Due in 2 days',
     action: 'Pay now',
-    amount: '₹2,840',
+    amount: '₹2.8 k',
     context: "I have an electricity bill of ₹2,840 due in 2 days. Please pay it from my salary account."
   },
 ]
 
 const thisWeekActions = [
   {
+    id: 1,
     icon: TrendingUp,
-    color: '#10B981',
-    bg: '#ECFDF5',
-    title: 'Invest Surplus',
-    subtitle: 'You have ₹15k extra cash',
-    amount: 'Invest',
-    value: '+₹2.4L',
+    color: '#FFFFFF',
+    bg: '#1E293B',
+    title: 'Monitor',
+    subtitle: 'Portfolio at high risk',
+    amount: 'Balance',
+    value: '+₹2.4 L',
     meta: 'in 10y',
     context: "I have ₹15,000 surplus cash in my account. You suggested investing it. What's the best fund for this right now?"
   },
   {
+    id: 2,
     icon: Shield,
-    color: '#3B82F6',
-    bg: '#EFF6FF',
+    color: '#1E293B',
+    bg: '#BFDBFE', // Light Blue
     title: 'Health Top-up',
     subtitle: 'Get ₹15L cover for family',
     amount: 'Review',
@@ -62,9 +64,10 @@ const thisWeekActions = [
     context: "I'm interested in the ₹15L health insurance top-up for ₹267/month. Can you explain the coverage details?"
   },
   {
+    id: 3,
     icon: CreditCard,
-    color: '#6366F1',
-    bg: '#EEF2FF',
+    color: '#1E293B',
+    bg: '#E9D5FF', // Soft Purple
     title: 'Credit Score',
     subtitle: 'Report utilization < 30%',
     amount: 'Boost',
@@ -86,22 +89,22 @@ export default function Dashboard() {
   const greeting = currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <Page>
+    <Page paddingTop={60}>
       {/* ─── Header ─── */}
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{ marginBottom: 32, padding: '0 4px' }}
+        style={{ marginBottom: 32 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#F97316' }} />
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-            Command
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#064E3B' }} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#57534E', textTransform: 'uppercase', letterSpacing: 1.5 }}>
+            Overview
           </span>
         </div>
-        <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: -1, color: '#0F172A', maxWidth: '80%' }}>
-          {greeting}, <span style={{ color: '#94A3B8' }}>Ankur.</span>
+        <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: -2, color: '#1C1917', lineHeight: 1 }}>
+          Good morning,<br/>Ankur<span style={{ color: '#F97316' }}>.</span>
         </h1>
       </motion.div>
 
@@ -111,151 +114,202 @@ export default function Dashboard() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <div style={{ padding: 24, background: '#0F172A', borderRadius: 24, color: 'white' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <p style={{ fontSize: 13, color: '#94A3B8', fontWeight: 500 }}>Total Net Worth</p>
-              <h2 style={{ fontSize: 42, fontWeight: 400, letterSpacing: -1.5, marginTop: 4 }}>
-                ₹75.0<span style={{ color: '#64748B' }}>L</span>
-              </h2>
-            </div>
-            <div style={{ 
-              backgroundColor: 'rgba(16, 185, 129, 0.2)', 
-              color: '#34D399', 
-              padding: '6px 12px', 
-              borderRadius: 100,
-              fontSize: 13, fontWeight: 600,
-              display: 'flex', alignItems: 'center', gap: 4
+        <div style={{ 
+          padding: '36px 32px 32px', 
+          background: '#FFFFFF', // New Clean White  
+          borderRadius: 40,
+          border: '1px solid rgba(0,0,0,0.08)',
+          boxShadow: '0 32px 64px -16px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.02)',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          {/* Decorative Loop/Swirl (CSS) - Now Glowing Orbs to match Action.jsx */}
+          <div style={{
+            position: 'absolute', top: -40, right: -40, width: 220, height: 220,
+            borderRadius: '50%', background: '#064E3B', 
+            filter: 'blur(50px)', opacity: 0.08,
+            pointerEvents: 'none'
+          }} />
+          <div style={{
+            position: 'absolute', bottom: -60, left: -40, width: 180, height: 180,
+            borderRadius: '50%', background: '#10B981', 
+            filter: 'blur(60px)', opacity: 0.12,
+            pointerEvents: 'none'
+          }} />
+
+          {/* Top Label */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1, marginBottom: 24 }}>
+             <div style={{ 
+                fontSize: 12, fontWeight: 800, color: '#0F172A', 
+                textTransform: 'uppercase', letterSpacing: 1.5,
+                background: '#F8FAFC', padding: '10px 18px', borderRadius: 100
             }}>
-              <TrendingUp size={14} />
+                Net Worth
+            </div>
+            
+             <div style={{ 
+              backgroundColor: '#ECFDF5', 
+              color: '#064E3B', 
+              padding: '8px 16px', 
+              borderRadius: 100,
+              fontSize: 14, fontWeight: 800,
+              display: 'flex', alignItems: 'center', gap: 6,
+              boxShadow: '0 4px 12px rgba(6, 78, 59, 0.05)'
+            }}>
+              <TrendingUp size={16} strokeWidth={3} />
               {todayChangePercent}%
             </div>
           </div>
+
+          <div>
+             <h2 style={{ fontSize: 64, fontWeight: 900, letterSpacing: -3.5, marginBottom: 4, lineHeight: 0.9, color: '#0F172A' }}>
+                ₹75.0<span style={{ opacity: 0.4, fontSize: 36, fontWeight: 700, marginLeft: 4 }}>L</span>
+             </h2>
+             <p style={{ fontSize: 16, fontWeight: 600, color: '#64748B', marginTop: 12 }}>+₹12.4k today</p>
+          </div>
           
-          <div style={{ marginTop: 24 }}>
+          <div style={{ marginTop: 42, position: 'relative', zIndex: 1, opacity: 1 }}>
             <Sparkline 
               data={[468, 471, 474, 476, 473, 475, 478, 474, 477, 479]} 
               width={300} 
-              height={40} 
-              color="#34D399" 
-              strokeWidth={2}
+              height={56} 
+              color="#10B981" 
+              strokeWidth={4}
             />
           </div>
         </div>
       </motion.div>
 
-      {/* ─── Priority Actions (Urgent) ─── */}
+      {/* ─── Notification Bubbles (Urgent) ─── */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
         style={{ marginTop: 32 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#78716C', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Needs Attention
           </h3>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#EF4444' }}>2 actions</span>
         </div>
 
-        <div style={{ display: 'grid', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {urgentItems.map((item) => (
             <div key={item.id} 
               style={{ 
-                padding: 16, 
-                background: 'white',
-                borderRadius: 20,
-                display: 'flex', alignItems: 'center', gap: 16,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-                border: '1px solid #F1F5F9'
+                padding: 24, 
+                background: '#FFFFFF',
+                borderRadius: 28,
+                display: 'flex', alignItems: 'center', gap: 20,
+                boxShadow: '0 24px 48px -12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
+                border: 'none',
+                position: 'relative',
+                overflow: 'hidden'
               }}
               onClick={() => navigate('/advisor', { state: { initialQuery: item.context } })}
             >
+              {/* Glow */}
+              <div style={{
+                position: 'absolute', top: -30, left: -30, width: 100, height: 100,
+                background: item.bgColor, opacity: 0.25, filter: 'blur(40px)', borderRadius: '50%'
+              }} />
+
               <div style={{ 
-                width: 44, height: 44, borderRadius: 14, 
+                width: 56, height: 56, borderRadius: 20, 
                 background: item.bgColor, 
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: item.color
+                color: item.color,
+                zIndex: 1,
+                boxShadow: `0 8px 16px -4px ${item.bgColor}40`
               }}>
-                <item.icon size={20} />
+                <item.icon size={28} strokeWidth={2.5} />
               </div>
-              <div style={{ flex: 1 }}>
-                <h4 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A' }}>{item.title}</h4>
-                <p style={{ fontSize: 13, color: '#64748B' }}>{item.subtitle}</p>
+              <div style={{ flex: 1, zIndex: 1 }}>
+                <h4 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', letterSpacing: -0.6, marginBottom: 4 }}>{item.title}</h4>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                   <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.bgColor}40`, padding: '4px 10px', borderRadius: 100, letterSpacing: 0.5, backdropFilter: 'blur(4px)' }}>
+                      {item.action}
+                   </span>
+                   <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>{item.subtitle.split('•')[0]}</span>
+                </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', display: 'block' }}>{item.amount}</span>
-                <span style={{ fontSize: 11, color: item.color, fontWeight: 600 }}>{item.action}</span>
+              <div style={{ textAlign: 'right', zIndex: 1 }}>
+                 <div style={{ fontSize: 19, fontWeight: 900, color: '#0F172A', letterSpacing: -0.8 }}>{item.amount}</div>
               </div>
             </div>
           ))}
         </div>
       </motion.div>
 
-      {/* ─── AI Opportunities (Horizontal Deck) ─── */}
+      {/* ─── Suggested For You (Cards) ─── */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
         style={{ marginTop: 32 }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#78716C', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Suggested For You
           </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#6366F1', fontSize: 12, fontWeight: 600 }}>
-            <Sparkles size={12} />
-            <span>AI Insights</span>
-          </div>
         </div>
 
-        <ScrollRow gap={12}>
+        <ScrollRow gap={16}>
           {thisWeekActions.map((action, i) => (
             <div 
               key={i}
               style={{ 
-                minWidth: 260, 
+                minWidth: 280, 
                 scrollSnapAlign: 'center',
-                background: action.bg,
-                borderRadius: 24,
-                padding: 20,
-                border: '1px solid rgba(0,0,0,0.03)',
-                boxShadow: 'none',
+                background: action.color === '#FFFFFF' ? '#1E293B' : '#FFFFFF',
+                borderRadius: 40,
+                padding: 32,
+                border: 'none',
+                boxShadow: '0 24px 48px -12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                color: action.color === '#FFFFFF' ? 'white' : '#0F172A'
               }}
               onClick={() => navigate('/advisor', { state: { initialQuery: action.context } })}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+              {/* Glow */}
+              <div style={{
+                  position: 'absolute', top: -50, right: -50, width: 200, height: 200,
+                  borderRadius: '50%', background: action.color === '#FFFFFF' ? 'rgba(255,255,255,0.05)' : action.bg,
+                  filter: 'blur(60px)', opacity: 0.2,
+                  pointerEvents: 'none'
+              }} />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
                 <div style={{ 
-                  width: 44, height: 44, borderRadius: 14, 
-                  background: 'white', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: action.color,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                    padding: '8px 16px', 
+                    background: action.color === '#FFFFFF' ? 'rgba(255,255,255,0.1)' : '#F1F5F9', 
+                    backdropFilter: 'blur(8px)',
+                    color: action.color === '#FFFFFF' ? 'white' : '#64748B',
+                    borderRadius: 100, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1
                 }}>
-                  <action.icon size={22} />
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: action.color, letterSpacing: -0.5 }}>{action.value}</div>
-                  <div style={{ fontSize: 11, color: action.color, fontWeight: 600, opacity: 0.8 }}>{action.meta}</div>
+                    {action.title}
                 </div>
               </div>
               
-              <h4 style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{action.title}</h4>
-              <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.4, marginBottom: 20, fontWeight: 500 }}>{action.subtitle}</p>
+              <div style={{ marginBottom: 32, position: 'relative', zIndex: 1 }}>
+                 <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: -2, lineHeight: 1, marginBottom: 8 }}>{action.value}</div>
+                 <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.7 }}>{action.subtitle}</div>
+              </div>
 
               <div style={{ 
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.06)' 
+                paddingTop: 24, borderTop: `1px solid ${action.color === '#FFFFFF' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}` 
               }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: action.color }}>{action.amount}</span>
+                <span style={{ fontSize: 16, fontWeight: 800 }}>{action.amount}</span>
                 <div style={{ 
-                  width: 24, height: 24, borderRadius: 12, 
-                  background: 'white', color: action.color,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  width: 44, height: 44, borderRadius: 16, 
+                  background: action.color === '#FFFFFF' ? 'white' : '#0F172A', 
+                  color: action.color === '#FFFFFF' ? '#0F172A' : 'white',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 8px 16px -4px rgba(0,0,0,0.1)'
                 }}>
-                  <ChevronRight size={14} />
+                  <ArrowUpRight size={22} strokeWidth={3} />
                 </div>
               </div>
             </div>
@@ -270,35 +324,35 @@ export default function Dashboard() {
         transition={{ duration: 0.5, delay: 0.4 }}
         style={{ marginTop: 32, marginBottom: 120 }}
       >
-         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#78716C', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Recent Activity
           </h3>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#3B82F6' }}>See all</span>
+          <span style={{ fontSize: 12, fontWeight: 800, color: '#EA580C' }}>See all</span>
         </div>
         
-        <div style={{ background: 'white', borderRadius: 20, padding: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.02)', border: '1px solid #F1F5F9' }}>
+        <div style={{ background: 'white', borderRadius: 28, padding: 8, boxShadow: '0 4px 20px -4px rgba(0,0,0,0.06)', border: 'none' }}>
           {recentTrans.map((t, i) => (
             <div key={t.id} style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-              padding: '16px 12px',
-              borderBottom: i < recentTrans.length - 1 ? '1px solid #F1F5F9' : 'none'
+              padding: '18px 16px',
+              borderBottom: i < recentTrans.length - 1 ? '1px solid #F5F5F4' : 'none'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{ 
-                  width: 40, height: 40, borderRadius: 12, 
-                  background: '#F8FAFC', 
+                  width: 44, height: 44, borderRadius: 14, 
+                  background: '#F5F5F4', 
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 18
+                  fontSize: 20
                 }}>
                   {t.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>{t.name}</div>
-                  <div style={{ fontSize: 12, color: '#94A3B8' }}>{t.time} • {t.cat}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#1C1917' }}>{t.name}</div>
+                  <div style={{ fontSize: 13, color: '#78716C', fontWeight: 500 }}>{t.time}</div>
                 </div>
               </div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: t.amount < 0 ? '#0F172A' : '#10B981' }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: t.amount < 0 ? '#1C1917' : '#059669' }}>
                 {t.amount < 0 ? '-' : '+'}₹{Math.abs(t.amount)}
               </div>
             </div>

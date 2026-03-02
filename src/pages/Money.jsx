@@ -3,10 +3,10 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { 
   ArrowUpRight, ArrowDownRight, PieChart, Activity, 
-  TrendingUp, Shield, Globe, Zap, ChevronRight, Sparkles, ArrowRight
+  TrendingUp, Shield, Globe, Zap, ChevronRight, Sparkles, ArrowRight, RotateCcw
 } from 'lucide-react'
-import { Page, ScrollRow } from '../components/UI'
-import { Sparkline } from '../components/Charts'
+import { Page, ScrollRow, stagger } from '../components/UI'
+import { Sparkline, Donut, SegmentBar, Bar, Ring } from '../components/Charts'
 
 /* ─── Data ─── */
 const holdings = [
@@ -25,7 +25,7 @@ const actionItems = [
     color: '#EF4444', // RED
     bg: '#FEF2F2',
     title: 'Medium Term: 73% Equity',
-    subtitle: 'Move ₹1.2L to Debt NOW',
+    subtitle: 'Move ₹1.2 L to Debt NOW',
     benefit: 'Protect Gains',
     context: "My medium term bucket has 73% equity allocation against a target of 30%. Help me rebalance by moving ₹1.2L from high-risk equity to debt."
   },
@@ -35,7 +35,7 @@ const actionItems = [
     color: '#7C3AED',
     bg: '#F5F3FF',
     title: 'No Term Insurance',
-    subtitle: '₹1Cr cover costs just ₹800/mo',
+    subtitle: '₹1 Cr cover costs just ₹800/mo',
     benefit: 'Protection Gap',
     context: "I don't have any term insurance. I'm 32 with a ₹75L portfolio and dependents. What's the right term plan coverage and which provider should I pick?"
   }
@@ -84,418 +84,494 @@ const marketInsights = [
   },
 ]
 
+/* ─── Flippable Card Wrapper ─── */
+const cardStyle = {
+  minWidth: 'calc(100% - 24px)',
+  scrollSnapAlign: 'center',
+  height: '62vh',
+  perspective: 1200,
+  borderRadius: 40,
+}
+
+const faceBase = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  backfaceVisibility: 'hidden',
+  WebkitBackfaceVisibility: 'hidden',
+  borderRadius: 40,
+  padding: '36px 32px 32px',
+  border: 'none',
+  boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+}
+
+function FlipCard({ front, back, bg = '#FFFFFF' }) {
+  const [flipped, setFlipped] = useState(false)
+  return (
+    <div style={cardStyle} onClick={() => setFlipped(f => !f)}>
+      <motion.div
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{ duration: 0.6, type: 'spring', stiffness: 260, damping: 20 }}
+        style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
+      >
+        {/* Front */}
+        <div style={{ ...faceBase, background: bg, color: '#0F172A' }}>
+          {/* Tap hint */}
+          <div style={{ position: 'absolute', top: 16, right: 20, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1 }}>
+            <RotateCcw size={10} /> Tap to flip
+          </div>
+          {front}
+        </div>
+        {/* Back */}
+        <div style={{ ...faceBase, background: bg, color: '#0F172A', transform: 'rotateY(180deg)' }}>
+          <div style={{ position: 'absolute', top: 16, right: 20, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1 }}>
+            <RotateCcw size={10} /> Tap to flip
+          </div>
+          {back}
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
 export default function Money() {
   const navigate = useNavigate()
 
   return (
-    <Page>
+    <Page paddingTop={100} bg="#F5F5F4">
+      <motion.div variants={stagger.container} initial="hidden" animate="show">
       {/* ─── Header ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        style={{ marginBottom: 32, padding: '0 4px' }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-            Wealth
-          </span>
-        </div>
-        <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: -1, color: '#0F172A' }}>
-          Investments
+      <motion.div variants={stagger.item} style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: '#0F172A', lineHeight: 1.05 }}>
+          Invest<span style={{ color: '#4F46E5' }}>.</span>
         </h1>
       </motion.div>
 
       {/* ─── Hero Swipeable Deck ─── */}
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
+      <motion.div variants={stagger.item} style={{ marginBottom: 32 }}>
         <ScrollRow gap={16} style={{ paddingBottom: 10 }}>
-            {/* Card 1: Net Worth & XIRR */}
-            <div style={{ 
-                minWidth: 320, 
-                padding: 24, 
-                background: '#0F172A', 
-                borderRadius: 24, 
-                color: 'white',
-                scrollSnapAlign: 'center',
-                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                height: 440
-            }}>
-                <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                            <p style={{ fontSize: 13, color: '#94A3B8', fontWeight: 500 }}>Net Worth</p>
-                            <h2 style={{ fontSize: 42, fontWeight: 400, letterSpacing: -1.5, marginTop: 4 }}>
-                                ₹75.0<span style={{ color: '#64748B' }}>L</span>
-                            </h2>
-                        </div>
-                        <div style={{ 
-                            background: 'rgba(16, 185, 129, 0.2)', color: '#34D399', 
-                            padding: '6px 12px', borderRadius: 100, fontSize: 13, fontWeight: 700 
-                        }}>
-                            18.4% XIRR
-                        </div>
-                    </div>
 
-                    {/* Net Worth Growth Chart */}
-                    <div style={{ marginTop: 16 }}>
-                        <div style={{ fontSize: 10, color: '#64748B', marginBottom: 4, fontWeight: 500 }}>12-Month Growth</div>
-                        <Sparkline data={netWorthGrowth} width={272} height={48} color="#34D399" strokeW={2} gradient={true} />
+            {/* ═══ Card 1: Net Worth — FLIPPABLE ═══ */}
+            <FlipCard
+              bg="linear-gradient(165deg, #EEF2FF 0%, #E0E7FF 100%)"
+              front={
+                <>
+                  {/* Compact top label */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                      Total Wealth
                     </div>
-
-                    <div style={{ marginTop: 12 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#94A3B8', marginBottom: 6 }}>
-                            <span>₹75L Reached</span>
-                            <span>₹1 Cr Target</span>
-                        </div>
-                        <div style={{ height: 6, width: '100%', background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden' }}>
-                            <motion.div 
-                                initial={{ width: 0 }} 
-                                animate={{ width: '75%' }} 
-                                transition={{ duration: 1, delay: 0.2 }}
-                                style={{ height: '100%', background: '#10B981' }} 
-                            />
-                        </div>
-                        <div style={{ marginTop: 8, fontSize: 12, color: '#10B981', fontWeight: 500 }}>
-                            🚀 You are 75% of the way to ₹1 Crore!
-                        </div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>
+                      75% to ₹1Cr
                     </div>
-                </div>
+                  </div>
 
-                <div style={{ display: 'flex', gap: 24, paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  {/* Ring + Amount hero block */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
+                    <Ring percent={75} size={88} stroke={8} color="#4F46E5" track="rgba(79,70,229,0.12)">
+                      <span style={{ fontSize: 16, fontWeight: 900, color: '#4F46E5' }}>75%</span>
+                    </Ring>
                     <div>
-                        <div style={{ fontSize: 13, color: '#94A3B8' }}>Invested</div>
-                        <div style={{ fontSize: 18, fontWeight: 600, marginTop: 4 }}>₹58.2L</div>
+                      <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', letterSpacing: -2.5, lineHeight: 1 }}>
+                        ₹75L
+                      </h4>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#10B981', marginTop: 4 }}>
+                        +₹16.8L profit
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Growth chart — full width, prominent */}
+                  <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: 16, padding: '12px 14px', marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>12-Month Growth</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: '#4F46E5' }}>18% XIRR</span>
+                    </div>
+                    <Sparkline data={netWorthGrowth} width={280} height={120} color="#4F46E5" strokeW={2.5} />
+                  </div>
+
+                  {/* Callout + CTA pinned to bottom */}
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                        SIP ₹35k/mo • Invested ₹58.2L
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Analyze my full portfolio of ₹75L across equity, debt, and gold. Show me complete breakdown and suggest optimizations." } }) }}
+                      style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
+                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>View Breakdown</span>
+                      </div>
+                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={22} strokeWidth={3} />
+                      </div>
+                    </button>
+                  </div>
+                </>
+              }
+              back={
+                <>
+                  {/* Back: Donut Chart + Breakdown */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                     <div>
-                        <div style={{ fontSize: 13, color: '#94A3B8' }}>Unrealized Gains</div>
-                        <div style={{ fontSize: 18, fontWeight: 600, color: '#34D399', marginTop: 4 }}>+₹16.8L</div>
+                      <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Wealth Map</span>
+                      <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>₹75L across 5 asset classes</p>
                     </div>
-                </div>
-            </div>
-
-            {/* Card 2: Portfolio Mix (Previous View) */}
-            <div style={{ 
-                minWidth: 320, 
-                padding: 24, 
-                background: 'white', 
-                borderRadius: 24, 
-                border: '1px solid #E2E8F0',
-                color: '#0F172A',
-                scrollSnapAlign: 'center',
-                height: 440,
-                display: 'flex', flexDirection: 'column'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700 }}>Portfolio Mix</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#3B82F6', background: '#EFF6FF', padding: '2px 8px', borderRadius: 4 }}>Horizon</span>
-                </div>
-                
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {/* Liquid */}
-                    <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
-                            <span>Liquid <span style={{color:'#64748B', fontWeight:400}}>(Emergency)</span></span>
-                            <span>₹6L</span>
-                        </div>
-                        <div style={{ height: 6, background: '#F1F5F9', borderRadius: 4 }}><div style={{ width: '8%', height: '100%', background: '#10B981', borderRadius: 4}} /></div>
-                        <div style={{ fontSize: 10, color: '#64748B', marginTop: 3 }}>Savings A/C ₹2L • Liquid Fund ₹4L</div>
-                    </div>
-                     {/* Short Term */}
-                     <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
-                            <span>Short <span style={{color:'#64748B', fontWeight:400}}>(1-3 Yrs)</span></span>
-                            <span>₹9L</span>
-                        </div>
-                        <div style={{ height: 6, background: '#F1F5F9', borderRadius: 4 }}><div style={{ width: '12%', height: '100%', background: '#0EA5E9', borderRadius: 4}} /></div>
-                        <div style={{ fontSize: 10, color: '#64748B', marginTop: 3 }}>Ultra Short Debt ₹5L • FDs ₹4L</div>
-                    </div>
-                     {/* Medium Term */}
-                     <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
-                            <span>Medium <span style={{color:'#64748B', fontWeight:400}}>(3-5 Yrs)</span></span>
-                            <span>₹15L</span>
-                        </div>
-                        <div style={{ height: 6, background: '#F1F5F9', borderRadius: 4 }}><div style={{ width: '20%', height: '100%', background: '#F59E0B', borderRadius: 4}} /></div>
-                        <div style={{ fontSize: 10, color: '#64748B', marginTop: 3 }}>Gold SGB ₹5.5L • Balanced Adv ₹9.5L</div>
-                    </div>
-                     {/* Long Term */}
-                     <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
-                            <span>Long <span style={{color:'#64748B', fontWeight:400}}>(7+ Yrs)</span></span>
-                            <span>₹45L</span>
-                        </div>
-                        <div style={{ height: 6, background: '#F1F5F9', borderRadius: 4, display: 'flex', overflow:'hidden' }}>
-                            <div style={{ width: '47%', height: '100%', background: '#3B82F6'}} />
-                            <div style={{ width: '32%', height: '100%', background: '#6366F1'}} />
-                            <div style={{ width: '21%', height: '100%', background: '#818CF8'}} />
-                        </div>
-                        <div style={{ fontSize: 10, color: '#64748B', marginTop: 3 }}>Flexi Cap ₹18.2L • Small Cap ₹12.4L • MidCap ₹8.1L</div>
-                    </div>
-
-                    {/* Protection */}
-                    <div style={{ paddingTop: 6, borderTop: '1px dashed #E2E8F0' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
-                            <span style={{ color: '#7C3AED' }}>🛡 Protection</span>
-                            <span style={{ color: '#EF4444', fontSize: 11 }}>Gap!</span>
-                        </div>
-                        <div style={{ fontSize: 10, color: '#64748B' }}>No Term Insurance • Health ₹5L (upgrade to ₹25L)</div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Card 3: Top Movers */}
-            <div style={{ 
-                minWidth: 320, 
-                padding: 24, 
-                background: '#F8FAFC', 
-                borderRadius: 24, 
-                border: '1px solid #E2E8F0',
-                color: '#0F172A',
-                scrollSnapAlign: 'center',
-                height: 440,
-                display: 'flex', flexDirection: 'column'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700 }}>Top Gainers</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#10B981' }}>1Y Returns</span>
-                </div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
+                    <Donut size={80} stroke={10} segments={[
+                      { value: 65, color: '#4F46E5' },
+                      { value: 17, color: '#0EA5E9' },
+                      { value: 7, color: '#F59E0B' },
+                      { value: 8, color: '#10B981' },
+                      { value: 3, color: '#8B5CF6' },
+                    ]}>
+                      <span style={{ fontSize: 14, fontWeight: 900, color: '#0F172A' }}>75L</span>
+                    </Donut>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {[
-                        { name: 'Quant Small Cap', ret: '+64%', amt: '₹12.4L', color: '#10B981' },
-                        { name: 'HDFC MidCap Opps', ret: '+41%', amt: '₹8.1L', color: '#10B981' },
-                        { name: 'Parag Parikh Flexi', ret: '+28%', amt: '₹18.2L', color: '#34D399' },
-                        { name: 'SGB 2028 (Gold)', ret: '+14%', amt: '₹5.5L', color: '#F59E0B' },
-                    ].map((fund, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                                <div style={{ fontSize: 13, fontWeight: 600, color: '#1E293B' }}>{fund.name}</div>
-                                <div style={{ fontSize: 11, color: '#64748B' }}>Value: {fund.amt}</div>
-                            </div>
-                            <div style={{ 
-                                background: 'white', border: `1px solid ${fund.color}`, 
-                                color: fund.color, fontSize: 12, fontWeight: 700, 
-                                padding: '4px 8px', borderRadius: 6 
-                            }}>
-                                {fund.ret}
-                            </div>
+                      { label: 'Equity MFs', value: '₹48.8L', pct: 65, color: '#4F46E5', xirr: '22.1%' },
+                      { label: 'Debt / FDs', value: '₹13.0L', pct: 17, color: '#0EA5E9', xirr: '7.4%' },
+                      { label: 'Gold (SGB)', value: '₹5.5L', pct: 7, color: '#F59E0B', xirr: '14.8%' },
+                      { label: 'Liquid', value: '₹6.0L', pct: 8, color: '#10B981', xirr: '5.2%' },
+                      { label: 'NPS', value: '₹1.7L', pct: 3, color: '#8B5CF6', xirr: '11.6%' },
+                    ].map((item, i) => (
+                      <div key={i}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, marginBottom: 5 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 4, background: item.color }} />
+                            <span>{item.label}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: '#16A34A' }}>{item.xirr}</span>
+                            <span>{item.value} <span style={{ color: '#94A3B8', fontWeight: 500 }}>({item.pct}%)</span></span>
+                          </div>
                         </div>
+                        <Bar value={item.pct} max={100} color={item.color} h={6} delay={i * 0.1} />
+                      </div>
                     ))}
-                </div>
-                <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid #E2E8F0', fontSize: 12, color: '#F59E0B', fontStyle: 'italic', fontWeight: 500 }}>
-                    ⚠️ Small Caps led this year, but regime is shifting — watch for correction signs.
-                </div>
-            </div>
+                  </div>
+                  {/* Growth sparkline */}
+                  <div style={{ paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', gap: 20 }}>
+                      <div>
+                        <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>SIP/MO</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>₹35k</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>INVESTED</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#4F46E5' }}>₹58.2L</div>
+                      </div>
+                    </div>
+                    <Sparkline data={netWorthGrowth} width={80} height={32} color="#4F46E5" strokeW={2} />
+                  </div>
+                </>
+              }
+            />
+
+            {/* ═══ Card 2: Portfolio Mix — FLIPPABLE ═══ */}
+            <FlipCard
+              bg="linear-gradient(165deg, #ECFDF5 0%, #D1FAE5 100%)"
+              front={
+                <>
+                  {/* Header: Pill Label + Circle Dot */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
+                      Portfolio Mix
+                    </div>
+                    <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
+                    </div>
+                  </div>
+
+                  {/* Hero Content */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <h4 style={{ fontSize: 52, fontWeight: 900, color: '#0F172A', marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                      4 Buckets
+                    </h4>
+                    <p style={{ fontSize: 20, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                      Your ₹75L split by time horizon — from instant access to 10yr+ wealth.
+                    </p>
+                    <div style={{ marginTop: 16 }}>
+                      <SegmentBar height={8} segments={[
+                        { value: 65, color: '#4F46E5' },
+                        { value: 17, color: '#0EA5E9' },
+                        { value: 7, color: '#F59E0B' },
+                        { value: 8, color: '#10B981' },
+                      ]} />
+                      <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                        {[
+                          { l: 'Eq', p: 65, c: '#4F46E5' },
+                          { l: 'Debt', p: 17, c: '#0EA5E9' },
+                          { l: 'Gold', p: 7, c: '#F59E0B' },
+                          { l: 'Cash', p: 8, c: '#10B981' },
+                        ].map((a, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 700, color: '#64748B' }}>
+                            <div style={{ width: 6, height: 6, borderRadius: 3, background: a.c }} />
+                            {a.l} {a.p}%
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Callout + CTA pinned to bottom */}
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                        ⚠️ Equity 5% Over Target
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Analyze my portfolio allocation across 4 buckets — Liquid ₹6L, Short ₹9L, Medium ₹15L, Long ₹45L. Am I balanced?" } }) }}
+                      style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
+                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Rebalance</span>
+                      </div>
+                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={22} strokeWidth={3} />
+                      </div>
+                    </button>
+                  </div>
+                </>
+              }
+              back={
+                <>
+                  {/* Back: Time-Horizon Allocation */}
+                  <div style={{ marginBottom: 16 }}>
+                    <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Horizon Buckets</span>
+                    <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>₹75L split by when you need the money</p>
+                  </div>
+
+                  {/* Stacked segment bar */}
+                  <div style={{ marginBottom: 16 }}>
+                    <SegmentBar height={14} segments={[
+                      { value: 8, color: '#10B981' },
+                      { value: 12, color: '#0EA5E9' },
+                      { value: 20, color: '#F59E0B' },
+                      { value: 60, color: '#4F46E5' },
+                    ]} />
+                  </div>
+
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {[
+                      { label: 'Liquid', horizon: '< 6 months', value: '₹6.0L', pct: 8, color: '#10B981', detail: 'Savings + Liquid Fund', xirr: '5.2%' },
+                      { label: 'Short Term', horizon: '6mo – 2yr', value: '₹9.0L', pct: 12, color: '#0EA5E9', detail: 'FDs + Short Duration Debt', xirr: '7.8%' },
+                      { label: 'Medium Term', horizon: '2 – 5yr', value: '₹15.0L', pct: 20, color: '#F59E0B', detail: 'Hybrid + Balanced MFs', xirr: '12.4%' },
+                      { label: 'Long Term', horizon: '5yr+', value: '₹45.0L', pct: 60, color: '#4F46E5', detail: 'Equity MFs + NPS + SGB', xirr: '22.1%' },
+                    ].map((bucket, i) => (
+                      <div key={i} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 4, background: bucket.color }} />
+                            <span style={{ fontSize: 14, fontWeight: 800 }}>{bucket.label}</span>
+                            <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{bucket.horizon}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: bucket.xirr.startsWith('-') ? '#DC2626' : '#16A34A' }}>{bucket.xirr} XIRR</span>
+                            <span style={{ fontSize: 14, fontWeight: 800, color: bucket.color }}>{bucket.value}</span>
+                          </div>
+                        </div>
+                        <Bar value={bucket.pct} max={100} color={bucket.color} h={5} delay={i * 0.1} />
+                        <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, marginTop: 4 }}>{bucket.detail}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ padding: 14, background: '#FEF2F2', borderRadius: 14, marginTop: 'auto', fontSize: 13, fontWeight: 700, color: '#B91C1C', lineHeight: 1.4 }}>
+                    ⚠️ Medium bucket 73% in equity — rebalance ₹1.2L to debt
+                  </div>
+                </>
+              }
+            />
+
+            {/* ═══ Card 3: Top Movers — FLIPPABLE ═══ */}
+            <FlipCard
+              bg="linear-gradient(165deg, #FFFBEB 0%, #FEF3C7 100%)"
+              front={
+                <>
+                  {/* Header: Pill Label + Circle Dot */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
+                      Top Gainers
+                    </div>
+                    <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F59E0B' }} />
+                    </div>
+                  </div>
+
+                  {/* Hero Content */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <h4 style={{ fontSize: 52, fontWeight: 900, color: '#0F172A', marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                      +64% Best
+                    </h4>
+                    <p style={{ fontSize: 20, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                      Quant Small Cap leading your portfolio this year. But regime is shifting.
+                    </p>
+                    <div style={{ marginTop: 12 }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                        {[
+                          { name: 'Quant', ret: '+64%', color: '#10B981' },
+                          { name: 'HDFC', ret: '+41%', color: '#F59E0B' },
+                          { name: 'PPFAS', ret: '+28%', color: '#4F46E5' },
+                        ].map((f, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.6)', padding: '5px 10px', borderRadius: 10 }}>
+                            <div style={{ width: 6, height: 6, borderRadius: 3, background: f.color }} />
+                            <span style={{ fontSize: 11, fontWeight: 800, color: '#0F172A' }}>{f.name}</span>
+                            <span style={{ fontSize: 11, fontWeight: 800, color: f.color }}>{f.ret}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Callout + CTA pinned to bottom */}
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                        +8.2% Alpha vs Nifty
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Show me all my fund returns: Quant Small Cap +64%, HDFC MidCap +41%, PPFAS +28%, SGB +14%. Should I book profits in small caps?" } }) }}
+                      style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
+                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>View All Funds</span>
+                      </div>
+                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={22} strokeWidth={3} />
+                      </div>
+                    </button>
+                  </div>
+                </>
+              }
+              back={
+                <>
+                  {/* Back: Fund Performance with Sparklines */}
+                  <div style={{ marginBottom: 16 }}>
+                    <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Fund Returns</span>
+                    <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>1-year performance with trend</p>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {[
+                      { name: 'Quant Small Cap', ret: '+64%', val: '₹12.4L', trend: [60, 72, 68, 85, 90, 98, 108, 112, 118, 120, 124], color: '#10B981', risk: 'High' },
+                      { name: 'HDFC MidCap', ret: '+41%', val: '₹8.1L', trend: [58, 62, 64, 68, 72, 74, 76, 78, 80, 81], color: '#F59E0B', risk: 'Med' },
+                      { name: 'PPFAS Flexi', ret: '+28%', val: '₹18.2L', trend: [142, 148, 152, 158, 162, 168, 172, 176, 180, 182], color: '#4F46E5', risk: 'Low' },
+                      { name: 'SGB 2028', ret: '+14%', val: '₹5.5L', trend: [48, 49, 50, 51, 52, 53, 54, 55, 55], color: '#D97706', risk: 'Low' },
+                    ].map((fund, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1E293B', marginBottom: 2 }}>{fund.name}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontSize: 18, fontWeight: 900, color: fund.color }}>{fund.ret}</span>
+                            <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{fund.val}</span>
+                          </div>
+                        </div>
+                        <Sparkline data={fund.trend} width={100} height={28} color={fund.color} strokeW={2} />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ padding: 14, background: '#ECFDF5', borderRadius: 14, marginTop: 'auto', fontSize: 13, fontWeight: 700, color: '#065F46', lineHeight: 1.4 }}>
+                    ✅ Portfolio Sharpe: 1.7 — Above Nifty benchmark (1.2)
+                  </div>
+                </>
+              }
+            />
         </ScrollRow>
 
-        {/* ─── Optimize CTA ─── */}
-        <div style={{ padding: '16px 4px 0' }}>
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/advisor', { state: {
-              activeItem: {
-                id: 'optimize',
-                icon: Zap,
-                color: '#6366F1',
-                bg: '#EEF2FF',
-                title: 'Optimize My Portfolio',
-                subtitle: 'AI-powered rebalancing',
-                benefit: 'Optimize',
-                context: "Analyze my full portfolio of ₹75L across equity, debt, and gold. Suggest rebalancing moves to optimize risk-adjusted returns, improve diversification, and align with my goals."
-              },
-              context: 'money',
-              allItems: actionItems
-            }})}
-            style={{
-              width: '100%', padding: '14px 20px',
-              background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
-              color: 'white', border: 'none', borderRadius: 16,
-              fontSize: 15, fontWeight: 700, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              boxShadow: '0 4px 16px rgba(99,102,241,0.3)'
-            }}
-          >
-            <Zap size={18} /> Optimize My Portfolio
-          </motion.button>
-        </div>
+
       </motion.div>
 
-      {/* ─── Action Items (Priority) ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
-        style={{ marginTop: 32 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#EF4444', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      {/* ─── Action Items (Compact) ─── */}
+      <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#EF4444', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Attention Needed
           </h3>
         </div>
-
-        <ScrollRow gap={12}>
+        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
           {actionItems.map((item, i) => (
-            <motion.div 
+            <motion.div
               key={item.id}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/advisor', { state: { 
-                activeItem: item,
-                context: 'money',
-                allItems: actionItems
-              }})}
-              style={{ 
-                minWidth: 260, 
-                scrollSnapAlign: 'center',
-                background: item.bg,
-                borderRadius: 24,
-                padding: 20,
-                border: '1px solid rgba(0,0,0,0.03)',
-                boxShadow: 'none',
-                position: 'relative',
-                overflow: 'hidden'
+              whileTap={{ scale: 0.985 }}
+              onClick={() => navigate('/advisor', { state: { activeItem: item, context: 'money', allItems: actionItems }})}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 16px',
+                borderBottom: i < actionItems.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                cursor: 'pointer'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                <div style={{ 
-                  width: 44, height: 44, borderRadius: 14, 
-                  background: 'white', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: item.color,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-                }}>
-                  <item.icon size={22} />
-                </div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: item.color, background: 'white', padding: '4px 8px', borderRadius: 6 }}>
-                  {item.benefit}
-                </div>
+              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
               </div>
-              
-              <h4 style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{item.title}</h4>
-              <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.4, marginBottom: 20, fontWeight: 500 }}>{item.subtitle}</p>
-
-              <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                <button style={{ 
-                  flex: 1,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  fontSize: 13, fontWeight: 700, color: 'white',
-                  background: '#0F172A', border: 'none', padding: '10px',
-                  borderRadius: 12
-                }}>
-                  Take Action <ArrowRight size={14} />
-                </button>
-                <button style={{ 
-                  width: 40,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'white', border: 'none', borderRadius: 12,
-                  color: item.color
-                }}>
-                  <Sparkles size={16} />
-                </button>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
+                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>
+                <ChevronRight size={16} color="#94A3B8" />
               </div>
             </motion.div>
           ))}
-        </ScrollRow>
+        </div>
       </motion.div>
 
-      {/* ─── Market Intelligence (Deck) ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        style={{ marginTop: 32 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      {/* ─── Market Intelligence (Compact) ─── */}
+      <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Market Intelligence
           </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#6366F1', fontSize: 12, fontWeight: 600 }}>
-            <Sparkles size={12} />
-            <span>AI Briefs</span>
-          </div>
         </div>
-
-        <ScrollRow gap={12}>
+        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
           {marketInsights.map((item, i) => (
-            <div 
-              key={i}
-              style={{ 
-                minWidth: 260, 
-                scrollSnapAlign: 'center',
-                background: item.bg,
-                borderRadius: 24,
-                padding: 20,
-                border: '1px solid rgba(0,0,0,0.03)',
-                boxShadow: 'none',
-                position: 'relative',
-                overflow: 'hidden'
+            <motion.div
+              key={item.id}
+              whileTap={{ scale: 0.985 }}
+              onClick={() => navigate('/advisor', { state: { activeItem: item, context: 'market', allItems: marketInsights }})}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 16px',
+                borderBottom: i < marketInsights.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                cursor: 'pointer'
               }}
-              onClick={() => navigate('/advisor', { state: { 
-                activeItem: item,
-                context: 'market',
-                allItems: marketInsights
-              }})}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                <div style={{ 
-                  width: 44, height: 44, borderRadius: 14, 
-                  background: 'white', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: item.color,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-                }}>
-                  <item.icon size={22} />
-                </div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: item.color, background: 'white', padding: '4px 8px', borderRadius: 6 }}>
-                  {item.benefit}
-                </div>
+              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
               </div>
-              
-              <h4 style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{item.title}</h4>
-              <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.4, marginBottom: 20, fontWeight: 500 }}>{item.subtitle}</p>
-
-              <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                <button style={{ 
-                  flex: 1,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  fontSize: 13, fontWeight: 700, color: 'white',
-                  background: '#0F172A', border: 'none', padding: '10px',
-                  borderRadius: 12
-                }}>
-                  Analyze Impact <ArrowRight size={14} />
-                </button>
-                <button style={{ 
-                  width: 40,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'white', border: 'none', borderRadius: 12,
-                  color: item.color
-                }}>
-                  <Sparkles size={16} />
-                </button>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
+                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
               </div>
-            </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>
+                <ChevronRight size={16} color="#94A3B8" />
+              </div>
+            </motion.div>
           ))}
-        </ScrollRow>
+        </div>
       </motion.div>
 
       {/* ─── Holdings List ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        style={{ marginTop: 32, marginBottom: 120 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      <motion.div variants={stagger.item} style={{ marginTop: 32, marginBottom: 120 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Top Holdings
           </h3>
         </div>
 
-        <div style={{ background: 'white', borderRadius: 20, padding: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.02)', border: '1px solid #F1F5F9' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 8, boxShadow: '0 1px 8px rgba(0,0,0,0.04)', border: 'none' }}>
           {holdings.map((h, i) => (
             <div key={i} style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
@@ -520,6 +596,7 @@ export default function Money() {
             </div>
           ))}
         </div>
+      </motion.div>
       </motion.div>
     </Page>
   )

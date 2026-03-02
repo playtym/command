@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { 
   CreditCard, ShoppingBag, Coffee, ChevronRight, 
   Sparkles, AlertCircle, Calendar, ArrowUpRight,
-  School, Plane, Hotel, ArrowRight
+  School, Plane, Hotel, ArrowRight, RotateCcw
 } from 'lucide-react'
-import { Page, ScrollRow } from '../components/UI'
+import { Page, ScrollRow, stagger } from '../components/UI'
+import { GaugeArc, Bar, SegmentBar, Donut } from '../components/Charts'
 
 const upcomingExpenses = [
   {
@@ -27,7 +28,7 @@ const upcomingExpenses = [
     bg: '#E0F2FE',
     title: 'Summer Trip in May',
     subtitle: 'Flights & Hotel fully budgeted',
-    amount: '₹1.2L',
+    amount: '₹1.2 L',
     benefit: 'Goal Reached',
     context: "I've already booked flights for my summer trip, but I need to plan for the hotel bills which I'll pay during the trip. Help me budgert for this."
   },
@@ -40,8 +41,8 @@ const spendInsights = [
     color: '#EF4444',
     bg: '#FEF2F2',
     title: 'Shopping Alert',
-    subtitle: 'Myntra & Amazon',
-    amount: '₹5.6k',
+    subtitle: 'Myntra & Amazon spend ₹5.6k this month — 40% over your usual.',
+    amount: '₹5.6 k',
     benefit: 'Over Budget',
     context: "I seem to have overspent on shopping this month (₹5.6k). Can you break down my recent shopping transactions and suggest a cap?"
   },
@@ -51,7 +52,7 @@ const spendInsights = [
     color: '#8B5CF6',
     bg: '#F5F3FF',
     title: 'Subscription Audit',
-    subtitle: 'Netflix usage low',
+    subtitle: 'Netflix watched 2 hrs in 30 days — cancel or downgrade?',
     amount: '₹649',
     benefit: 'Save Money',
     context: "You mentioned my Netflix usage is low compared to the cost. Should I cancel it or downgrade?"
@@ -61,25 +62,28 @@ const spendInsights = [
 const creditCards = [
   { id: 1, name: 'HDFC Regalia', last4: '4242', limit: 120000, used: 45000, color: '#3B82F6', network: 'VISA',
     topSpend: 'Travel', optimal: true, status: 'Great for Lounge',
+    bg: 'linear-gradient(165deg, #EFF6FF 0%, #DBEAFE 100%)',
     breakdown: [
-      { color: '#3B82F6', width: '40%' }, // Travel
-      { color: '#F59E0B', width: '30%' }, // Dining
-      { color: '#10B981', width: '15%' }, // Grocery
+      { label: 'Travel', color: '#3B82F6', pct: '40%' },
+      { label: 'Dining', color: '#F59E0B', pct: '30%' },
+      { label: 'Grocery', color: '#10B981', pct: '15%' },
     ]
   },
   { id: 2, name: 'ICICI Amazon', last4: '8812', limit: 80000, used: 12100, color: '#F59E0B', network: 'MasterCard',
     topSpend: 'Shopping', optimal: false, status: 'Use Regalia for Dining',
+    bg: 'linear-gradient(165deg, #FFFBEB 0%, #FEF3C7 100%)',
     breakdown: [
-      { color: '#EF4444', width: '70%' }, // Shopping
-      { color: '#8B5CF6', width: '20%' }, // Subs
+      { label: 'Shopping', color: '#EF4444', pct: '70%' },
+      { label: 'Subscriptions', color: '#8B5CF6', pct: '20%' },
     ]
   },
   { id: 3, name: 'Gold Member', last4: '7821', limit: 200000, used: 24750, color: '#D97706', network: 'Gold Tier',
     topSpend: 'Luxury', optimal: true, status: '2% Flat Cashback',
+    bg: 'linear-gradient(165deg, #FEF3C7 0%, #FDE68A 100%)',
     breakdown: [
-      { color: '#D97706', width: '50%' }, // Gold Only
-      { color: '#F59E0B', width: '20%' }, 
-      { color: '#FDE68A', width: '10%' }, 
+      { label: 'Premium', color: '#D97706', pct: '50%' },
+      { label: 'Dining', color: '#F59E0B', pct: '20%' },
+      { label: 'Other', color: '#FDE68A', pct: '10%' },
     ]
   },
 ]
@@ -92,388 +96,392 @@ const recentTrans = [
   { id: 5, name: 'Salary', cat: 'Income', amount: 85000, time: '01 Feb', icon: '💰' },
 ]
 
+/* ─── Flippable Card Wrapper (matches Money/Action) ─── */
+const cardStyle = {
+  minWidth: 'calc(100% - 24px)',
+  scrollSnapAlign: 'center',
+  height: '62vh',
+  perspective: 1200,
+  borderRadius: 40,
+}
+
+const faceBase = {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  backfaceVisibility: 'hidden',
+  WebkitBackfaceVisibility: 'hidden',
+  borderRadius: 40,
+  padding: '36px 32px 32px',
+  border: 'none',
+  boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+}
+
+function FlipCard({ front, back, bg = '#FFFFFF' }) {
+  const [flipped, setFlipped] = useState(false)
+  return (
+    <div style={cardStyle} onClick={() => setFlipped(f => !f)}>
+      <motion.div
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{ duration: 0.6, type: 'spring', stiffness: 260, damping: 20 }}
+        style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
+      >
+        <div style={{ ...faceBase, background: bg, color: '#0F172A' }}>
+          <div style={{ position: 'absolute', top: 16, right: 20, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1 }}>
+            <RotateCcw size={10} /> Tap to flip
+          </div>
+          {front}
+        </div>
+        <div style={{ ...faceBase, background: bg, color: '#0F172A', transform: 'rotateY(180deg)' }}>
+          <div style={{ position: 'absolute', top: 16, right: 20, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1 }}>
+            <RotateCcw size={10} /> Tap to flip
+          </div>
+          {back}
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
 export default function Spend() {
   const navigate = useNavigate()
-  const [activeCardId, setActiveCardId] = useState(null)
-  const totalSpent = 27440
-  const monthlyLimit = 45000
 
   return (
-    <Page>
+    <Page paddingTop={100} bg="#F5F5F4">
+      <motion.div variants={stagger.container} initial="hidden" animate="show">
+
       {/* ─── Header ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        style={{ marginBottom: 32, padding: '0 4px' }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#EF4444' }} />
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-            Cash Flow
-          </span>
-        </div>
-        <h1 style={{ fontSize: 32, fontWeight: 500, letterSpacing: -1, color: '#0F172A' }}>
-          February Spend
+      <motion.div variants={stagger.item} style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: '#0F172A', lineHeight: 1.05 }}>
+          Spend<span style={{ color: '#EA580C' }}>.</span>
         </h1>
       </motion.div>
 
-      {/* ─── Hero Spend ─── */}
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
-        <div style={{ padding: 24, background: '#0F172A', borderRadius: 24, color: 'white' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <p style={{ fontSize: 13, color: '#94A3B8', fontWeight: 500 }}>Total Spent</p>
-              <h2 style={{ fontSize: 42, fontWeight: 400, letterSpacing: -1.5, marginTop: 4 }}>
-                ₹27.4<span style={{ color: '#64748B' }}>k</span>
-              </h2>
-            </div>
-            <div style={{ 
-              backgroundColor: 'rgba(239, 68, 68, 0.2)', 
-              color: '#F87171', 
-              padding: '6px 12px', 
-              borderRadius: 100,
-              fontSize: 13, fontWeight: 600
-            }}>
-              61% of Limit
-            </div>
-          </div>
+      {/* ─── Hero Cards: Feb Outflow + All Credit Cards (Horizontal Scroll) ─── */}
+      <motion.div variants={stagger.item} style={{ marginBottom: 32 }}>
+        <ScrollRow gap={16} style={{ paddingBottom: 10 }}>
 
-          <div style={{ marginTop: 24 }}>
-            {/* Multi-Colored Progress Bar */}
-            <div style={{ height: 10, width: '100%', background: 'rgba(255,255,255,0.1)', borderRadius: 6, overflow: 'hidden', display: 'flex' }}>
-              <motion.div 
-                initial={{ width: 0 }} 
-                animate={{ width: '35%' }} 
-                transition={{ duration: 1, delay: 0.2 }}
-                style={{ height: '100%', background: '#3B82F6', borderRight: '2px solid #0F172A' }} 
-              />
-              <motion.div 
-                initial={{ width: 0 }} 
-                animate={{ width: '15%' }} 
-                transition={{ duration: 1, delay: 0.4 }}
-                style={{ height: '100%', background: '#F59E0B', borderRight: '2px solid #0F172A' }} 
-              />
-               <motion.div 
-                initial={{ width: 0 }} 
-                animate={{ width: '11%' }} 
-                transition={{ duration: 1, delay: 0.6 }}
-                style={{ height: '100%', background: '#10B981', borderRight: '2px solid #0F172A' }} 
-              />
-            </div>
-            
-            {/* Legend for Spend */}
-            <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: '#3B82F6' }} />
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>Travel</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: '#F59E0B' }} />
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>Dining</span>
-                </div>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: '#10B981' }} />
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>Shop</span>
-                </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ─── Credit Cards (Usage - Wallet Stack) ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.12 }}
-        style={{ marginTop: 24 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
-            Card Limits (Wallet)
-          </h3>
-        </div>
-
-        <div style={{ position: 'relative', height: 300, marginBottom: 0 }}>
-          {creditCards.map((card, i) => {
-            const isTarget = activeCardId === card.id
-            const percent = Math.round((card.used / card.limit) * 100)
-            const isHigh = percent > 30
-            const needsBreakdown = card.breakdown && card.breakdown.length > 0
-            
-            // Wallet Stack Logic
-            // If a card is "active", it moves to the top (y=0). 
-            // Others bunch up at the bottom or stay in their "stack" position if no card is heavily active?
-            // Actually, a simple persistent stack is best for "Basic Info Visible".
-            // Let's do: Always stacked with ~60px reveal. Clicking expands one.
-            
-            return (
-              <motion.div 
-                key={card.id} 
-                onClick={() => setActiveCardId(isTarget ? null : card.id)}
-                initial={false}
-                animate={{ 
-                    y: isTarget ? 0 : i * 55, // Stack headers visible
-                    scale: isTarget ? 1.05 : 1,
-                    zIndex: isTarget ? 100 : i,
-                }}
-                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-                style={{
-                  position: 'absolute', top: 0, left: 0, right: 0,
-                  background: 'white', 
-                  borderRadius: 24, 
-                  padding: 24,
-                  border: '1px solid rgba(0,0,0,0.05)',
-                  boxShadow: '0 -4px 10px rgba(0,0,0,0.03)',
-                  transformOrigin: 'top center',
-                  cursor: 'pointer',
-                  minHeight: 180 
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 44, height: 28, background: '#1E293B', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
-                       {card.network === 'Gold Tier' && (
-                           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #F59E0B, #D97706)' }} />
-                       )}
-                      <div style={{ position: 'absolute', top: -10, right: -4, width: 24, height: 24, background: 'rgba(255,255,255,0.2)', borderRadius: '50%' }} />
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>{card.name}</div>
-                      <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500 }}>XX{card.last4} • {card.network}</div>
-                    </div>
+          {/* ── Card 1: February Outflow ── */}
+          <FlipCard
+            bg="linear-gradient(165deg, #FFF7ED 0%, #FFEDD5 100%)"
+            front={
+              <>
+                {/* Header: Pill Label + Circle Dot */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
+                    February Outflow
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: isHigh && !card.optimal ? '#EF4444' : '#10B981' }}>{percent}%</div>
-                    <div style={{ fontSize: 11, color: '#94A3B8' }}>Used</div>
+                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F97316' }} />
                   </div>
                 </div>
 
-                {/* Multi-Colored Progress Bar */}
-                {needsBreakdown ? (
-                    <div style={{ height: 10, width: '100%', background: '#F1F5F9', borderRadius: 5, overflow: 'hidden', display: 'flex' }}>
-                       {card.breakdown.map((seg, idx) => (
-                           <motion.div 
-                                key={idx}
-                                initial={{ width: 0 }}
-                                animate={{ width: seg.width }}
-                                transition={{ duration: 0.8, delay: 0.2 + (idx * 0.1) }}
-                                style={{ height: '100%', background: seg.color }}
-                           />
-                       ))}
+                {/* Hero Content */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <h4 style={{ fontSize: 52, fontWeight: 900, color: '#0F172A', marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                    ₹27.4k Spent
+                  </h4>
+                  <p style={{ fontSize: 20, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                    61% of your ₹45k monthly budget used. Travel was the biggest category.
+                  </p>
+                  <div style={{ marginTop: 16 }}>
+                      <div style={{ marginBottom: 8 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#9A3412' }}>Budget Used</span>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: '#F97316' }}>61%</span>
+                        </div>
+                        <Bar value={61} max={100} color="#F97316" h={6} />
+                      </div>
                     </div>
-                ) : (
-                    <div style={{ height: 6, width: '100%', background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
-                    <div style={{ 
-                        height: '100%', 
-                        width: `${percent}%`, 
-                        background: isHigh ? '#EF4444' : '#10B981',
-                        borderRadius: 3 
-                    }} />
+                </div>
+
+                  {/* Callout + CTA pinned to bottom */}
+                  <div style={{ marginTop: 'auto' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                        ₹17.6k Remaining
+                      </div>
                     </div>
-                )}
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 14 }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I've spent ₹27.4k this month out of my ₹45k budget. Travel is my biggest category at ₹9.6k. Help me stay on track for the rest of the month." } }) }}
+                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
+                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Track Spending</span>
+                    </div>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={22} strokeWidth={3} />
+                    </div>
+                  </button>
+                </div>
+              </>
+            }
+            back={
+              <>
+                {/* Back: Spend Breakdown with GaugeArc + Category bars */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div>
-                    <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>Top: {card.topSpend}</span>
-                    <div style={{ fontSize: 12, color: card.optimal ? '#10B981' : '#F59E0B', marginTop: 4, fontWeight: 500 }}>
-                      {card.optimal ? '✅ Optimal for Rewards' : `⚠️ ${card.status}`}
-                    </div>
+                    <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Budget Tracker</span>
+                    <p style={{ fontSize: 12, color: '#9A3412', fontWeight: 600, marginTop: 4 }}>61% used • 26 days left</p>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                     <div style={{ fontSize: 13, color: '#0F172A', fontWeight: 600 }}>₹{(card.used/1000).toFixed(1)}k</div>
-                     <div style={{ fontSize: 11, color: '#94A3B8' }}>of ₹{(card.limit/1000).toFixed(0)}k</div>
+                  <GaugeArc value={61} max={100} size={80} stroke={8} color="#F97316" track="rgba(0,0,0,0.06)">
+                    <span style={{ fontSize: 16, fontWeight: 900, color: '#EA580C', marginTop: -8 }}>61%</span>
+                  </GaugeArc>
+                </div>
+
+                {/* Category breakdown with animated bars */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {[
+                    { cat: 'Travel', val: 9.6, max: 12, color: '#F97316', icon: '✈️' },
+                    { cat: 'Food & Dining', val: 6.2, max: 10, color: '#EF4444', icon: '🍔' },
+                    { cat: 'Shopping', val: 5.6, max: 6, color: '#8B5CF6', icon: '🛍️' },
+                    { cat: 'Transport', val: 3.2, max: 5, color: '#0EA5E9', icon: '🚗' },
+                    { cat: 'Subscriptions', val: 2.8, max: 4, color: '#10B981', icon: '📱' },
+                  ].map((c, i) => (
+                    <div key={i}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 12 }}>{c.icon}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>{c.cat}</span>
+                        </div>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: c.color }}>₹{c.val}k</span>
+                      </div>
+                      <Bar value={c.val} max={c.max} color={c.color} h={6} delay={i * 0.1} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bottom stats */}
+                <div style={{ paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 20 }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>SAFE/DAY</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#10B981' }}>₹677</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>PROJECTION</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#10B981' }}>₹35k</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>VS LAST MO</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#10B981' }}>-12%</div>
                   </div>
                 </div>
-              </motion.div>
-            )
-          })}
-        </div>
+              </>
+            }
+          />
+
+          {/* ── Card 2: All Credit Cards in One ── */}
+          <FlipCard
+            bg="linear-gradient(165deg, #F0F4FF 0%, #E0E7FF 100%)"
+            front={
+              <>
+                {/* Header: Pill Label + Circle Dot */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
+                    Credit Cards
+                  </div>
+                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#6366F1' }} />
+                  </div>
+                </div>
+
+                {/* Hero Content */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <h4 style={{ fontSize: 52, fontWeight: 900, color: '#0F172A', marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                    ₹81.9k Used
+                  </h4>
+                  <p style={{ fontSize: 20, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                    3 cards active • 20% overall utilization across ₹4L total limit.
+                  </p>
+                  <div style={{ marginTop: 12 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 10 }}>
+                        {[
+                          { name: 'Regalia', pct: 38, color: '#3B82F6' },
+                          { name: 'Amazon', pct: 15, color: '#F59E0B' },
+                          { name: 'Gold', pct: 12, color: '#D97706' },
+                        ].map((c, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: '#64748B', width: 48 }}>{c.name}</span>
+                            <div style={{ flex: 1 }}>
+                              <Bar value={c.pct} max={100} color={c.color} h={5} delay={i * 0.1} />
+                            </div>
+                            <span style={{ fontSize: 10, fontWeight: 800, color: c.color, width: 28 }}>{c.pct}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                </div>
+
+                {/* Callout + CTA pinned to bottom */}
+                <div style={{ marginTop: 'auto' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                      20% Used • All Healthy
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have 3 credit cards — HDFC Regalia (₹45k used), ICICI Amazon (₹12.1k used), Gold Member (₹24.75k used). Help me optimize which card to use for what." } }) }}
+                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
+                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Optimize Cards</span>
+                    </div>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={22} strokeWidth={3} />
+                    </div>
+                  </button>
+                </div>
+              </>
+            }
+            back={
+              <>
+                {/* Back: Card Utilization with visual bars + Donut */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div>
+                    <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8, color: '#312E81' }}>Card Health</span>
+                    <p style={{ fontSize: 12, color: '#6366F1', fontWeight: 600, marginTop: 4 }}>Utilization & rewards</p>
+                  </div>
+                  <Donut size={72} stroke={9} segments={[
+                    { value: 55, color: '#3B82F6' },
+                    { value: 15, color: '#F59E0B' },
+                    { value: 30, color: '#D97706' },
+                  ]}>
+                    <span style={{ fontSize: 12, fontWeight: 900, color: '#312E81' }}>20%</span>
+                  </Donut>
+                </div>
+
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {[
+                    { name: 'HDFC Regalia', used: 45000, limit: 120000, color: '#3B82F6', tip: '4x on dining', optimal: true },
+                    { name: 'ICICI Amazon', used: 12100, limit: 80000, color: '#F59E0B', tip: '5% on Amazon', optimal: false },
+                    { name: 'Gold Member', used: 24750, limit: 200000, color: '#D97706', tip: '2% flat cashback', optimal: true },
+                  ].map((card, i) => {
+                    const pct = Math.round((card.used / card.limit) * 100)
+                    return (
+                      <div key={i} style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 4, background: card.color }} />
+                            <span style={{ fontSize: 14, fontWeight: 800 }}>{card.name}</span>
+                          </div>
+                          <span style={{ fontSize: 12, fontWeight: 800, color: pct > 30 ? '#F59E0B' : '#10B981' }}>{pct}%</span>
+                        </div>
+                        <Bar value={card.used} max={card.limit} color={card.color} h={6} delay={i * 0.15} />
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+                          <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>₹{(card.used / 1000).toFixed(1)}k / ₹{(card.limit / 1000)}k</span>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: card.optimal ? '#10B981' : '#F59E0B' }}>{card.tip}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div style={{ padding: 12, background: '#EEF2FF', borderRadius: 14, marginTop: 'auto', fontSize: 13, fontWeight: 700, color: '#312E81', lineHeight: 1.4 }}>
+                  💡 Switch dining to Regalia for 4x points — saves ~₹1,200/yr
+                </div>
+              </>
+            }
+          />
+
+        </ScrollRow>
       </motion.div>
 
-      {/* ─── Upcoming Cash Flow (New Section) ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
-        style={{ marginTop: 32 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      {/* ─── Upcoming Cash Flow (Compact) ─── */}
+      <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#EF4444', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Big Expenses Coming Up
           </h3>
         </div>
-
-        <ScrollRow gap={12}>
+        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
           {upcomingExpenses.map((item, i) => (
-            <motion.div 
+            <motion.div
               key={item.id}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/advisor', { state: { 
-                activeItem: item,
-                context: 'spend',
-                allItems: upcomingExpenses
-              }})}
-              style={{ 
-                minWidth: 260, 
-                scrollSnapAlign: 'center',
-                background: item.bg,
-                borderRadius: 24,
-                padding: 20,
-                border: '1px solid rgba(0,0,0,0.03)',
-                boxShadow: 'none',
-                position: 'relative',
-                overflow: 'hidden',
+              whileTap={{ scale: 0.985 }}
+              onClick={() => navigate('/advisor', { state: { activeItem: item, context: 'spend', allItems: upcomingExpenses }})}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 16px',
+                borderBottom: i < upcomingExpenses.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
                 cursor: 'pointer'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                <div style={{ 
-                  width: 44, height: 44, borderRadius: 14, 
-                  background: 'white', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: item.color,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-                }}>
-                  <item.icon size={22} />
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: item.color, background: 'white', padding: '6px 10px', borderRadius: 8, boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
-                  {item.amount}
-                </div>
+              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
               </div>
-              
-              <h4 style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{item.title}</h4>
-              <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.4, marginBottom: 20, fontWeight: 500 }}>
-                {item.subtitle} • <span style={{color: item.color}}>{item.benefit}</span>
-              </p>
-
-              <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                <button style={{ 
-                  flex: 1,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  fontSize: 13, fontWeight: 700, color: 'white',
-                  background: '#0F172A', border: 'none', padding: '10px',
-                  borderRadius: 12
-                }}>
-                  Ask AI <ArrowRight size={14} />
-                </button>
-                <button style={{ 
-                  width: 40,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'white', border: 'none', borderRadius: 12,
-                  color: item.color
-                }}>
-                  <Sparkles size={16} />
-                </button>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
+                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: item.color, whiteSpace: 'nowrap' }}>{item.amount}</span>
+                <ChevronRight size={16} color="#94A3B8" />
               </div>
             </motion.div>
           ))}
-        </ScrollRow>
+        </div>
       </motion.div>
 
-      {/* ─── Spend Insights (Deck) ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        style={{ marginTop: 32 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      {/* ─── Spend Insights (Compact) ─── */}
+      <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Spending Analysis
           </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#6366F1', fontSize: 12, fontWeight: 600 }}>
-            <Sparkles size={12} />
-            <span>AI Audit</span>
-          </div>
         </div>
-
-        <ScrollRow gap={12}>
+        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
           {spendInsights.map((item, i) => (
-            <div 
-              key={i}
-              style={{ 
-                minWidth: 260, 
-                scrollSnapAlign: 'center',
-                background: item.bg,
-                borderRadius: 24,
-                padding: 20,
-                border: '1px solid rgba(0,0,0,0.03)',
-                boxShadow: 'none',
-                position: 'relative',
-                overflow: 'hidden'
+            <motion.div
+              key={item.id}
+              whileTap={{ scale: 0.985 }}
+              onClick={() => navigate('/advisor', { state: { initialQuery: item.context }})}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 16px',
+                borderBottom: i < spendInsights.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                cursor: 'pointer'
               }}
-              onClick={() => navigate('/advisor', { state: { initialQuery: item.context } })}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                <div style={{ 
-                  width: 44, height: 44, borderRadius: 14, 
-                  background: 'white', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: item.color,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-                }}>
-                  <item.icon size={22} />
-                </div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: item.color, background: 'white', padding: '4px 8px', borderRadius: 6 }}>
-                  {item.benefit}
-                </div>
+              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
               </div>
-              
-              <h4 style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{item.title}</h4>
-              <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.4, marginBottom: 20, fontWeight: 500 }}>{item.subtitle}</p>
-
-              <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-                <button style={{ 
-                  flex: 1,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  fontSize: 13, fontWeight: 700, color: 'white',
-                  background: '#0F172A', border: 'none', padding: '10px',
-                  borderRadius: 12
-                }}>
-                  Analyze <ArrowRight size={14} />
-                </button>
-                <button style={{ 
-                  width: 40,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'white', border: 'none', borderRadius: 12,
-                  color: item.color
-                }}>
-                  <Sparkles size={16} />
-                </button>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
+                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
               </div>
-            </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>
+                <ChevronRight size={16} color="#94A3B8" />
+              </div>
+            </motion.div>
           ))}
-        </ScrollRow>
+        </div>
       </motion.div>
 
       {/* ─── Transaction List ─── */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        style={{ marginTop: 32, marginBottom: 120 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
-          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#64748B', letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      <motion.div variants={stagger.item} style={{ marginTop: 32, marginBottom: 120 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
             Recent Transactions
           </h3>
         </div>
 
-        <div style={{ background: 'white', borderRadius: 20, padding: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.02)', border: '1px solid #F1F5F9' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 8, boxShadow: '0 1px 8px rgba(0,0,0,0.04)', border: 'none' }}>
           {recentTrans.map((t, i) => (
             <div key={t.id} style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
               padding: '16px 12px',
-              borderBottom: i < recentTrans.length - 1 ? '1px solid #F1F5F9' : 'none'
+              borderBottom: i < recentTrans.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{ 
                   width: 40, height: 40, borderRadius: 12, 
-                  background: '#F8FAFC', 
+                  background: 'rgba(0,0,0,0.03)', 
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 16
                 }}>
@@ -485,11 +493,13 @@ export default function Spend() {
                 </div>
               </div>
               <div style={{ fontSize: 15, fontWeight: 600, color: t.amount < 0 ? '#0F172A' : '#10B981' }}>
-                {t.amount < 0 ? '-' : '+'}₹{Math.abs(t.amount)}
+                {t.amount < 0 ? '-' : '+'}₹{Math.abs(t.amount).toLocaleString()}
               </div>
             </div>
           ))}
         </div>
+      </motion.div>
+
       </motion.div>
     </Page>
   )
