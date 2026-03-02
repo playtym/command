@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Send, Sparkles, ChevronLeft, ArrowRight, 
   Shield, TrendingUp, Zap, CreditCard, Globe, Activity,
-  Wallet, PiggyBank, Receipt, School, Heart
+  Wallet, PiggyBank, Receipt, School, Heart,
+  AlertTriangle, Target, Flame, ChevronRight
 } from 'lucide-react'
-import { Page, ScrollRow } from '../components/UI'
+import { Page, ScrollRow, stagger } from '../components/UI'
+import { Bar } from '../components/Charts'
 
 /* ─── Quick Topic Cards (shown when landing on AI tab directly) ─── */
 const quickTopics = [
@@ -45,6 +47,113 @@ const quickTopics = [
     title: 'Goal Tracker',
     subtitle: 'Am I on track for my goals?',
     context: "Am I on track for my financial goals? Check my ₹1Cr target, emergency fund, and school fee planning.",
+  },
+]
+
+/* ─── Action Items (mirrored from Action tab — the most important) ─── */
+const urgentActions = [
+  {
+    id: 'portfolio-rebalance',
+    icon: AlertTriangle,
+    color: '#D97706',
+    title: 'Equity at 77% — target is 60%',
+    detail: 'Move ₹1.2L from equity to debt before market corrects.',
+    impact: 'Reduce Risk',
+    query: "My debt allocation is just 12% against a target of 30%. Help me rebalance by moving ₹1.2L from high-risk equity.",
+  },
+  {
+    id: 'insurance-gap',
+    icon: Shield,
+    color: '#B91C1C',
+    title: '₹15L health cover gap',
+    detail: 'Mumbai ICU costs ₹10L. Your cover is ₹5L. Top-up for ₹267/mo.',
+    impact: 'Critical',
+    query: "Explain the gap in my health insurance compared to Mumbai hospital rates.",
+  },
+  {
+    id: 'tax-nps',
+    icon: Receipt,
+    color: '#4338CA',
+    title: 'Claim ₹15.6K tax refund',
+    detail: 'Invest ₹50K in NPS under 80CCD(1B). Deadline approaching.',
+    impact: 'Get ₹15.6K',
+    query: "Help me understand Section 80CCD(1B) and why investing ₹50K saves me ₹15.6K?",
+  },
+  {
+    id: 'insurance-review',
+    icon: CreditCard,
+    color: '#059669',
+    title: 'Save ₹4K/yr on car insurance',
+    detail: 'Switch HDFC Ergo → ICICI Lombard. Same coverage, lower premium.',
+    impact: 'Save ₹4K',
+    query: "I noticed you're paying ₹18k for HDFC Ergo. ICICI Lombard offers better coverage for ₹14k. Shall we switch?",
+  },
+  {
+    id: 'idle-cash',
+    icon: Wallet,
+    color: '#047857',
+    title: '₹1.3L idle in savings at 3%',
+    detail: 'Move to Liquid Fund for 7.2%. Extra ₹4.9K/yr with same liquidity.',
+    impact: '+₹4.9K',
+    query: "Analyze my HDFC idle cash. Why is a Liquid Fund better than my savings account?",
+  },
+  {
+    id: 'zomato-spend',
+    icon: Flame,
+    color: '#B45309',
+    title: 'Cut food delivery by 20%',
+    detail: '₹8.4K this month. Cap at ₹1.5K/week to save ₹24K/yr.',
+    impact: '₹24K/yr',
+    query: "Analyze my food delivery spending trends and suggest a realistic budget.",
+  },
+]
+
+/* ─── Review items — not urgent, for whenever ─── */
+const reviewItems = [
+  {
+    id: 'house-goal',
+    icon: Target,
+    color: '#EC4899',
+    label: 'Goals',
+    title: 'House goal ₹12L away • 2.8 yrs',
+    detail: 'Increase SIP by ₹5K to cut to 2.1 yrs.',
+    query: "My house down-payment goal is ₹12L short. I'm saving ₹15K/mo. How can I close this gap faster?",
+  },
+  {
+    id: 'platinum-push',
+    icon: Zap,
+    color: '#D97706',
+    label: 'Rewards',
+    title: '150 pts to Platinum',
+    detail: 'Complete 3 challenges → 700 pts → instant upgrade.',
+    query: "I'm 150 points away from Platinum. I have 3 active challenges worth 700 pts total. What's the fastest path?",
+  },
+  {
+    id: 'credit-score',
+    icon: TrendingUp,
+    color: '#10B981',
+    label: 'Health',
+    title: 'Credit utilization 45% → reduce to 28%',
+    detail: 'Pay mid-cycle ₹20K. Score +15-25 pts in 30 days.',
+    query: "How can I improve my credit score? It says keeping utilization under 30% helps. Currently at 45%.",
+  },
+  {
+    id: 'small-cap-trim',
+    icon: Activity,
+    color: '#8B5CF6',
+    label: 'Money',
+    title: 'Small Cap 24% — trim ₹2L',
+    detail: 'Book Quant profits (+64%), rotate to balanced fund.',
+    query: "Should I trim Small Cap? My allocation is 24% against a 15% target. Quant Small Cap has +64% gains.",
+  },
+  {
+    id: 'expenses-funding',
+    icon: AlertTriangle,
+    color: '#F59E0B',
+    label: 'Spend',
+    title: '2 upcoming expenses need funding',
+    detail: 'Vacation ₹80K (Jun) + Insurance ₹45K (Jul).',
+    query: "I have two upcoming expenses that need funding — Vacation ₹80K in June and Insurance ₹45K in July. Help me plan where the money comes from.",
   },
 ]
 
@@ -458,7 +567,7 @@ export default function Advisor() {
   const pendingItems = allItems.filter(i => activeCard && i.id !== activeCard.id)
 
   return (
-    <Page>
+    <Page paddingTop={100} bg="#F5F5F4">
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 140px)' }}>
         
         {/* ─── Header ─── */}
@@ -488,7 +597,11 @@ export default function Advisor() {
             </motion.button>
           )}
           <div style={{ flex: 1 }}>
-            {/* Standard Header Removed to focus on the big Greeting when not chatting */}
+            {!hasStartedChat && (
+              <h1 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: '#0F172A', lineHeight: 1.05 }}>
+                Command<span style={{ color: '#7C3AED' }}>.</span>
+              </h1>
+            )}
             {hasStartedChat && (
               <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: -0.5 }}>
                 Advisor
@@ -507,66 +620,131 @@ export default function Advisor() {
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 100 }} className="hide-scroll">
           
           {!hasStartedChat ? (
-            /* ─── DEFAULT LANDING (No card selected) ─── */
+            /* ─── COMMAND CENTER LANDING ─── */
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              variants={stagger.container} initial="hidden" animate="show"
             >
-              {/* Greeting */}
-              <div style={{ padding: '24px 8px 32px' }}>
-                <h2 style={{ 
-                  fontSize: 42, fontWeight: 900, color: '#0F172A', 
-                  marginBottom: 12, letterSpacing: -2, lineHeight: 1 
-                }}>
-                  Hi Ankur.
-                </h2>
-                <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4 }} className="hide-scroll">
-                    {['Portfolio', 'Tax', 'Spending', 'Goals'].map((tag, i) => (
-                        <div key={i} style={{ 
-                            padding: '8px 16px', borderRadius: 100, 
-                            border: '1px solid #E2E8F0', color: '#64748B', fontWeight: 600, fontSize: 14 
-                        }}>
-                            {tag}
-                        </div>
-                    ))}
+              {/* Score strip */}
+              <motion.div variants={stagger.item} style={{ display: 'flex', gap: 10, marginBottom: 24 }}>
+                {[
+                  { label: 'Net Worth', value: '₹1.25Cr', color: '#4F46E5' },
+                  { label: 'Monthly Burn', value: '₹27.4K', color: '#EF4444' },
+                  { label: 'XIRR', value: '18.4%', color: '#10B981' },
+                ].map((s, i) => (
+                  <div key={i} style={{ flex: 1, background: '#fff', borderRadius: 16, padding: '12px 14px', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{s.label}</div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: s.color, letterSpacing: -0.5 }}>{s.value}</div>
+                  </div>
+                ))}
+              </motion.div>
+
+              {/* ─── Urgent Actions (from Action tab) ─── */}
+              <motion.div variants={stagger.item} style={{ marginBottom: 24 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+                    Needs Your Action
+                  </h3>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#EF4444' }}>{urgentActions.length} items</span>
                 </div>
-              </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {urgentActions.map((action) => {
+                    const Icon = action.icon
+                    return (
+                      <motion.div
+                        key={action.id}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleUserMessage(action.query, true)}
+                        style={{
+                          background: '#fff', borderRadius: 20, padding: '14px 16px',
+                          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14,
+                          boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
+                          borderLeft: `4px solid ${action.color}`,
+                        }}
+                      >
+                        <div style={{ width: 40, height: 40, borderRadius: 12, background: `${action.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Icon size={18} color={action.color} strokeWidth={2.5} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{action.title}</div>
+                          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500, lineHeight: 1.3 }}>{action.detail}</div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, flexShrink: 0 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: action.color, background: `${action.color}10`, padding: '3px 8px', borderRadius: 6 }}>{action.impact}</span>
+                          <ChevronRight size={14} color="#CBD5E1" style={{ marginTop: 2 }} />
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </motion.div>
 
-              {/* Minimal Topic List */}
-              <div style={{ padding: '0 4px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {quickTopics.map((topic) => (
-                    <motion.div
-                      key={topic.id}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleTopicClick(topic)}
-                      style={{
-                        background: '#FFFFFF',
-                        borderRadius: 20,
-                        padding: '20px',
-                        cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', gap: 20,
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)'
-                      }}
-                    >
-                      <div style={{ 
-                        width: 44, height: 44, borderRadius: 14, 
-                        background: topic.bg,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: topic.color
-                      }}>
-                        <topic.icon size={22} strokeWidth={2.5} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 17, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{topic.title}</div>
-                        <div style={{ fontSize: 14, color: '#64748B' }}>{topic.subtitle}</div>
-                      </div>
-                      <div style={{ color: '#CBD5E1' }}><ArrowRight size={20} /></div>
-                    </motion.div>
-                  ))}
-              </div>
+              {/* ─── Review When Free ─── */}
+              <motion.div variants={stagger.item} style={{ marginBottom: 24 }}>
+                <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 12 }}>
+                  Review When Free
+                </h3>
+                <div style={{ background: '#fff', borderRadius: 20, overflow: 'hidden', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
+                  {reviewItems.map((item, i) => {
+                    const Icon = item.icon
+                    return (
+                      <motion.div
+                        key={item.id}
+                        whileTap={{ scale: 0.985 }}
+                        onClick={() => handleUserMessage(item.query, true)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 14,
+                          padding: '14px 16px',
+                          borderBottom: i < reviewItems.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Icon size={16} color={item.color} strokeWidth={2.5} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 1 }}>{item.title}</div>
+                          <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500, lineHeight: 1.3 }}>{item.detail}</div>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, flexShrink: 0 }}>
+                          <span style={{ fontSize: 9, fontWeight: 800, color: item.color, textTransform: 'uppercase', letterSpacing: 0.5, background: `${item.color}10`, padding: '2px 8px', borderRadius: 6 }}>{item.label}</span>
+                          <ChevronRight size={14} color="#CBD5E1" />
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </motion.div>
 
-              {/* Removed Suggested Prompts section to reduce noise */}
+              {/* Explore Topics */}
+              <motion.div variants={stagger.item} style={{ marginBottom: 120 }}>
+                <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 12 }}>
+                  Explore
+                </h3>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  {quickTopics.map((topic) => {
+                    const Icon = topic.icon
+                    return (
+                      <motion.div
+                        key={topic.id}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => handleTopicClick(topic)}
+                        style={{
+                          flex: '1 1 calc(50% - 5px)', minWidth: 150,
+                          background: '#fff', borderRadius: 16, padding: '16px 14px',
+                          cursor: 'pointer', boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div style={{ width: 32, height: 32, borderRadius: 10, background: topic.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                          <Icon size={16} color={topic.color} strokeWidth={2.5} />
+                        </div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{topic.title}</div>
+                        <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>{topic.subtitle}</div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </motion.div>
+
             </motion.div>
           ) : (
             /* ─── CHAT VIEW ─── */

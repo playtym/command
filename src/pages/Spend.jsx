@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { 
   CreditCard, ShoppingBag, Coffee, ChevronRight, 
   Sparkles, AlertCircle, Calendar, ArrowUpRight,
-  School, Plane, Hotel, ArrowRight, RotateCcw
+  School, Plane, Hotel, ArrowRight
 } from 'lucide-react'
 import { Page, ScrollRow, stagger } from '../components/UI'
 import { GaugeArc, Bar, SegmentBar, Donut } from '../components/Charts'
@@ -130,15 +130,9 @@ function FlipCard({ front, back, bg = '#FFFFFF' }) {
         style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
       >
         <div style={{ ...faceBase, background: bg, color: '#0F172A' }}>
-          <div style={{ position: 'absolute', top: 16, right: 20, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1 }}>
-            <RotateCcw size={10} /> Tap to flip
-          </div>
           {front}
         </div>
         <div style={{ ...faceBase, background: bg, color: '#0F172A', transform: 'rotateY(180deg)' }}>
-          <div style={{ position: 'absolute', top: 16, right: 20, zIndex: 2, display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1 }}>
-            <RotateCcw size={10} /> Tap to flip
-          </div>
           {back}
         </div>
       </motion.div>
@@ -388,43 +382,111 @@ export default function Spend() {
             }
           />
 
-        </ScrollRow>
-      </motion.div>
+          {/* ── Card 3: Big Expenses Coming Up ── */}
+          <FlipCard
+            bg="linear-gradient(165deg, #ECFDF5 0%, #D1FAE5 100%)"
+            front={
+              <>
+                {/* Header: Pill Label + Circle Dot */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
+                    Upcoming Expenses
+                  </div>
+                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
+                  </div>
+                </div>
 
-      {/* ─── Upcoming Cash Flow (Compact) ─── */}
-      <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#EF4444', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Big Expenses Coming Up
-          </h3>
-        </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-          {upcomingExpenses.map((item, i) => (
-            <motion.div
-              key={item.id}
-              whileTap={{ scale: 0.985 }}
-              onClick={() => navigate('/advisor', { state: { activeItem: item, context: 'spend', allItems: upcomingExpenses }})}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 16px',
-                borderBottom: i < upcomingExpenses.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
-                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: item.color, whiteSpace: 'nowrap' }}>{item.amount}</span>
-                <ChevronRight size={16} color="#94A3B8" />
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                {/* Hero Content */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Next 90 Days</div>
+                  <h4 style={{ fontSize: 42, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2, lineHeight: 0.95 }}>
+                    ₹2.8L Due
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {[
+                      { label: 'School Fee', when: 'Mar 5', amount: '₹42k', pct: 100, color: '#10B981', status: 'Funded' },
+                      { label: 'Insurance Premium', when: 'Mar 20', amount: '₹28k', pct: 60, color: '#F59E0B', status: '₹11k short' },
+                      { label: 'Summer Trip', when: 'May', amount: '₹1.2L', pct: 100, color: '#0EA5E9', status: 'Budgeted' },
+                      { label: 'Car Service', when: 'Apr', amount: '₹15k', pct: 0, color: '#EF4444', status: 'Not planned' },
+                    ].map((e, i) => (
+                      <div key={i}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 3, color: '#0F172A' }}>
+                          <span>{e.label} <span style={{ color: '#94A3B8', fontWeight: 600 }}>• {e.when}</span></span>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: e.pct >= 100 ? '#10B981' : e.pct > 0 ? '#F59E0B' : '#EF4444' }}>{e.status}</span>
+                            <span>{e.amount}</span>
+                          </div>
+                        </div>
+                        <Bar value={Math.max(e.pct, 3)} max={100} color={e.color} h={5} delay={i * 0.1} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Callout + CTA pinned to bottom */}
+                <div style={{ marginTop: 'auto' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                      ⚠️ 2 expenses need funding
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have ₹2.8L in expenses coming up over 90 days: School fee ₹42k (funded), Insurance ₹28k (₹11k short), Summer trip ₹1.2L (budgeted), Car service ₹15k (not planned). Help me plan." } }) }}
+                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
+                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Plan Ahead</span>
+                    </div>
+                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={22} strokeWidth={3} />
+                    </div>
+                  </button>
+                </div>
+              </>
+            }
+            back={
+              <>
+                {/* Back: Expense Details */}
+                <div style={{ marginBottom: 16 }}>
+                  <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Expense Plan</span>
+                  <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>Funding status & source for each</p>
+                </div>
+
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {[
+                    { label: 'School Fee', when: 'Mar 5', amount: '₹42,000', source: 'RD Auto-Pay', pct: 100, color: '#10B981', detail: 'Fully funded — auto-debit set' },
+                    { label: 'Insurance Premium', when: 'Mar 20', amount: '₹28,000', source: 'Salary A/c', pct: 60, color: '#F59E0B', detail: '₹17k available • Move ₹11k from savings' },
+                    { label: 'Summer Trip', when: 'May 15', amount: '₹1,20,000', source: 'Travel Fund', pct: 100, color: '#0EA5E9', detail: 'Flights booked • Hotel ₹45k pending' },
+                    { label: 'Car Service', when: 'Apr 10', amount: '₹15,000', source: 'Unplanned', pct: 0, color: '#EF4444', detail: 'Set aside from next salary cycle' },
+                  ].map((exp, i) => (
+                    <div key={i} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: 4, background: exp.color }} />
+                          <span style={{ fontSize: 14, fontWeight: 800 }}>{exp.label}</span>
+                          <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{exp.when}</span>
+                        </div>
+                        <span style={{ fontSize: 14, fontWeight: 800, color: exp.color }}>{exp.amount}</span>
+                      </div>
+                      <Bar value={Math.max(exp.pct, 3)} max={100} color={exp.color} h={5} delay={i * 0.1} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>{exp.source}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: exp.pct >= 100 ? '#10B981' : '#64748B' }}>{exp.detail}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ padding: 14, background: '#FEF2F2', borderRadius: 14, marginTop: 'auto', fontSize: 13, fontWeight: 700, color: '#B91C1C', lineHeight: 1.4 }}>
+                  ⚠️ Move ₹11k to salary a/c by Mar 15 for insurance premium
+                </div>
+              </>
+            }
+          />
+
+        </ScrollRow>
       </motion.div>
 
       {/* ─── Spend Insights (Compact) ─── */}
