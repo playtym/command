@@ -65,12 +65,21 @@ body {
   letter-spacing: -0.02em; /* Tight Swiss tracking */
 }
 
-#root { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; }
+#root { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; overflow-x: hidden; }
 ::-webkit-scrollbar { width: 0; }
 button { font-family: var(--font); cursor: pointer; }
 input { font-family: var(--font); }
 .hide-scroll::-webkit-scrollbar { display: none; }
 .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Mobile Safe Area ─── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* ─── Touch Action for Cards ─── */
+* { -webkit-tap-highlight-color: transparent; }
+input, textarea { font-size: 16px !important; } /* Prevent iOS auto-zoom */
 
 /* ─── Animations ─── */
 @keyframes float {

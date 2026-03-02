@@ -67,7 +67,7 @@ export function Sparkline({ data = [], width = 100, height = 28, color = 'var(--
   const id = `sp${Math.random().toString(36).slice(2, 7)}`
   const last = pts[pts.length - 1]
   return (
-    <svg width={width} height={height} style={{ display: 'block', flexShrink: 0 }}>
+    <svg viewBox={`0 0 ${width} ${height}`} style={{ display: 'block', width: '100%', maxWidth: width, height: 'auto' }}>
       {gradient && <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor={color} stopOpacity={0.3} />
         <stop offset="100%" stopColor={color} stopOpacity={0.02} />

@@ -911,7 +911,7 @@ export default function Advisor() {
         {/* ─── INPUT BAR (Always visible) ─── */}
         <div style={{ 
           position: 'fixed', 
-          bottom: 80, 
+          bottom: 'calc(72px + env(safe-area-inset-bottom, 8px))', 
           left: '50%', 
           transform: 'translateX(-50%)',
           width: 'calc(100% - 32px)', 

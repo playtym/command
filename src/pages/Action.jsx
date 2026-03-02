@@ -414,8 +414,8 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
             height: '100%',
             backfaceVisibility: 'hidden',
             background: action.bg || '#FFFFFF', 
-            borderRadius: 40,      
-            padding: '36px 32px 32px',
+            borderRadius: 32,      
+            padding: '24px 22px 22px',
             border: 'none',
             boxShadow: isTop 
               ? '0 8px 40px -12px rgba(0,0,0,0.10)'
@@ -425,7 +425,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
           }}
         >
             {/* ─── Standard Top Brand/Label ─── */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                 <div style={{ 
                     fontSize: 12, fontWeight: 800, color: '#0F172A', 
                     textTransform: 'uppercase', letterSpacing: 1.5,
@@ -436,7 +436,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
                 
                 <div style={{
                     position: 'relative',
-                    width: 52, height: 52, borderRadius: '50%',
+                    width: 44, height: 44, borderRadius: '50%',
                     background: '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     boxShadow: `0 8px 16px -4px rgba(0,0,0,0.05)`
@@ -448,27 +448,27 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
             {/* ─── Standard Hero Content ─── */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
                 <h4 style={{ 
-                    fontSize: 52, fontWeight: 900, color: '#0F172A', 
-                    marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92,
+                    fontSize: 44, fontWeight: 900, color: '#0F172A', 
+                    marginBottom: 16, letterSpacing: -2.8, lineHeight: 0.92,
                     whiteSpace: 'pre-line' 
                 }}>
                     {action.title}
                 </h4>
                 
                 <p style={{ 
-                    fontSize: 20, color: '#64748B', lineHeight: 1.5, 
+                    fontSize: 16, color: '#64748B', lineHeight: 1.5, 
                     fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' 
                 }}>
                     {action.desc}
                 </p>
 
-                <div style={{ marginTop: 32, display: 'inline-flex' }}>
+                <div style={{ marginTop: 24, display: 'inline-flex' }}>
                     <div style={{
                         background: '#FEF08A', 
                         border: '2px solid #0F172A',
-                        borderRadius: 16, padding: '12px 20px',
-                        fontSize: 18, fontWeight: 800, color: '#0F172A',
-                        boxShadow: '4px 4px 0px #0F172A'
+                        borderRadius: 14, padding: '10px 16px',
+                        fontSize: 16, fontWeight: 800, color: '#0F172A',
+                        boxShadow: '3px 3px 0px #0F172A'
                     }}>
                         {action.impact}
                     </div>
@@ -515,8 +515,8 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
             background: '#FFFFFF', 
-            borderRadius: 40,      
-            padding: '24px',
+            borderRadius: 32,      
+            padding: '22px',
             border: 'none',
             boxShadow: isTop 
               ? '0 8px 40px -12px rgba(0,0,0,0.10)'
@@ -781,7 +781,7 @@ export default function Action() {
           {/* ─── AI ACTION DECK (Hinge-style Swipeable Stack) ─── */}
           <motion.div variants={stagger.item} style={{ marginBottom: 32 }}>
             {/* Card Stack */}
-            <div style={{ position: 'relative', height: '62vh', perspective: 1000 }}>
+            <div style={{ position: 'relative', height: 'clamp(400px, 58vh, 540px)', perspective: 1000 }}>
               <AnimatePresence>
                 {remainingActions.slice(0, 3).reverse().map((action, reverseIdx) => {
                   const stackIdx = remainingActions.slice(0, 3).length - 1 - reverseIdx

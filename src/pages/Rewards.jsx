@@ -20,7 +20,7 @@ const milestones = [
 /* ─── Card infrastructure (matching Money/Spend) ─── */
 const cardStyle = {
   minWidth: 'calc(100% - 24px)',
-  height: '62vh',
+  height: 'clamp(400px, 58vh, 540px)',
   scrollSnapAlign: 'center',
   perspective: 1200,
   flexShrink: 0,
@@ -31,8 +31,8 @@ const faceBase = {
   inset: 0,
   backfaceVisibility: 'hidden',
   WebkitBackfaceVisibility: 'hidden',
-  borderRadius: 40,
-  padding: '36px 32px 32px',
+  borderRadius: 32,
+  padding: '24px 22px 22px',
   border: 'none',
   boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
   display: 'flex',
@@ -87,12 +87,12 @@ export default function Rewards() {
             front={
               <>
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Gold Status
                   </div>
-                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                    <Crown size={20} color="#D97706" strokeWidth={2.5} />
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <Crown size={18} color="#D97706" strokeWidth={2.5} />
                   </div>
                 </div>
 
@@ -153,14 +153,14 @@ export default function Rewards() {
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I'm a Gold member with 1,850 points, 150 away from Platinum. What's the fastest way to reach Platinum and what benefits do I unlock?" } }) }}
-                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>View Card</span>
+                      <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>View Card</span>
                     </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={22} strokeWidth={3} />
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} strokeWidth={3} />
                     </div>
                   </button>
                 </div>
@@ -208,11 +208,11 @@ export default function Rewards() {
             front={
               <>
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Challenges
                   </div>
-                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#4F46E5' }} />
                   </div>
                 </div>
@@ -252,14 +252,14 @@ export default function Rewards() {
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have 3 active challenges: No Spend Week (5/7 done), Credit Builder (pay early), and SIP Streak (6/12 months). Help me complete them all for 700 bonus points." } }) }}
-                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Complete All</span>
+                      <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Complete All</span>
                     </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={22} strokeWidth={3} />
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} strokeWidth={3} />
                     </div>
                   </button>
                 </div>
@@ -307,11 +307,11 @@ export default function Rewards() {
             front={
               <>
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Rewards Earned
                   </div>
-                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
                   </div>
                 </div>
@@ -353,14 +353,14 @@ export default function Rewards() {
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I've earned ₹8,240 in cashback & perks this year. How can I maximize my rewards across my 3 credit cards and available offers?" } }) }}
-                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Maximize</span>
+                      <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Maximize</span>
                     </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={22} strokeWidth={3} />
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} strokeWidth={3} />
                     </div>
                   </button>
                 </div>

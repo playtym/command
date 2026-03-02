@@ -88,9 +88,9 @@ const marketInsights = [
 const cardStyle = {
   minWidth: 'calc(100% - 24px)',
   scrollSnapAlign: 'center',
-  height: '62vh',
+  height: 'clamp(400px, 58vh, 540px)',
   perspective: 1200,
-  borderRadius: 40,
+  borderRadius: 32,
 }
 
 const faceBase = {
@@ -99,8 +99,8 @@ const faceBase = {
   height: '100%',
   backfaceVisibility: 'hidden',
   WebkitBackfaceVisibility: 'hidden',
-  borderRadius: 40,
-  padding: '36px 32px 32px',
+  borderRadius: 32,
+  padding: '24px 22px 22px',
   border: 'none',
   boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
   display: 'flex',
@@ -153,11 +153,11 @@ export default function Money() {
               front={
                 <>
                   {/* Header: Pill Label + Circle Dot (matches other cards) */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Total Wealth
                     </div>
-                    <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                       <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#4F46E5' }} />
                     </div>
                   </div>
@@ -210,7 +210,7 @@ export default function Money() {
                         <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: -0.5 }}>View Breakdown</span>
                       </div>
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ArrowRight size={20} strokeWidth={3} />
+                        <ArrowRight size={18} strokeWidth={3} />
                       </div>
                     </button>
                   </div>
@@ -283,11 +283,11 @@ export default function Money() {
               front={
                 <>
                   {/* Header: Pill Label + Circle Dot */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Portfolio Mix
                     </div>
-                    <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                       <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
                     </div>
                   </div>
@@ -330,14 +330,14 @@ export default function Money() {
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Analyze my portfolio allocation across 4 buckets — Liquid ₹6L, Short ₹9L, Medium ₹15L, Long ₹45L. Am I balanced?" } }) }}
-                      style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Rebalance</span>
+                        <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Rebalance</span>
                       </div>
-                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ArrowRight size={22} strokeWidth={3} />
+                      <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={18} strokeWidth={3} />
                       </div>
                     </button>
                   </div>
@@ -427,11 +427,11 @@ export default function Money() {
               front={
                 <>
                   {/* Header: Pill Label + Circle Dot */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Top Gainers
                     </div>
-                    <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                       <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F59E0B' }} />
                     </div>
                   </div>
@@ -482,14 +482,14 @@ export default function Money() {
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Show me all my fund returns: Quant Small Cap +64%, HDFC MidCap +41%, PPFAS +28%, SGB +14%. Should I book profits in small caps?" } }) }}
-                      style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>View All Funds</span>
+                        <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>View All Funds</span>
                       </div>
-                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ArrowRight size={22} strokeWidth={3} />
+                      <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={18} strokeWidth={3} />
                       </div>
                     </button>
                   </div>
@@ -534,11 +534,11 @@ export default function Money() {
               front={
                 <>
                   {/* Header: Pill Label + Circle Dot */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Life Goals
                     </div>
-                    <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                       <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#E11D48' }} />
                     </div>
                   </div>
@@ -576,14 +576,14 @@ export default function Money() {
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Review my 4 life goals: Emergency Fund ₹6L (done), House Down-payment ₹20L (68% at ₹13.6L), Child Education ₹50L (22%), Retirement ₹3Cr (15%). Am I on track?" } }) }}
-                      style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Plan Goals</span>
+                        <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Plan Goals</span>
                       </div>
-                      <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ArrowRight size={22} strokeWidth={3} />
+                      <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ArrowRight size={18} strokeWidth={3} />
                       </div>
                     </button>
                   </div>

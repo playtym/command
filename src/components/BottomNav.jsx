@@ -17,7 +17,7 @@ export default function BottomNav() {
       position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
       width: '100%', maxWidth: 430,
       display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end',
-      padding: '12px 16px env(safe-area-inset-bottom, 24px)',
+      padding: '10px 8px calc(8px + env(safe-area-inset-bottom, 8px))',
       zIndex: 100, 
       background: 'rgba(255, 255, 255, 0.9)',
       backdropFilter: 'blur(20px)',

@@ -100,9 +100,9 @@ const recentTrans = [
 const cardStyle = {
   minWidth: 'calc(100% - 24px)',
   scrollSnapAlign: 'center',
-  height: '62vh',
+  height: 'clamp(400px, 58vh, 540px)',
   perspective: 1200,
-  borderRadius: 40,
+  borderRadius: 32,
 }
 
 const faceBase = {
@@ -111,8 +111,8 @@ const faceBase = {
   height: '100%',
   backfaceVisibility: 'hidden',
   WebkitBackfaceVisibility: 'hidden',
-  borderRadius: 40,
-  padding: '36px 32px 32px',
+  borderRadius: 32,
+  padding: '24px 22px 22px',
   border: 'none',
   boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
   display: 'flex',
@@ -164,21 +164,21 @@ export default function Spend() {
             front={
               <>
                 {/* Header: Pill Label + Circle Dot */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     February Outflow
                   </div>
-                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F97316' }} />
                   </div>
                 </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <h4 style={{ fontSize: 52, fontWeight: 900, color: '#0F172A', marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2.8, lineHeight: 0.92 }}>
                     ₹27.4k Spent
                   </h4>
-                  <p style={{ fontSize: 20, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                  <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
                     61% of your ₹45k monthly budget used. Travel was the biggest category.
                   </p>
                   <div style={{ marginTop: 16 }}>
@@ -201,14 +201,14 @@ export default function Spend() {
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I've spent ₹27.4k this month out of my ₹45k budget. Travel is my biggest category at ₹9.6k. Help me stay on track for the rest of the month." } }) }}
-                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Track Spending</span>
+                      <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Track Spending</span>
                     </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={22} strokeWidth={3} />
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} strokeWidth={3} />
                     </div>
                   </button>
                 </div>
@@ -274,21 +274,21 @@ export default function Spend() {
             front={
               <>
                 {/* Header: Pill Label + Circle Dot */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Credit Cards
                   </div>
-                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#6366F1' }} />
                   </div>
                 </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <h4 style={{ fontSize: 52, fontWeight: 900, color: '#0F172A', marginBottom: 24, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2.8, lineHeight: 0.92 }}>
                     ₹81.9k Used
                   </h4>
-                  <p style={{ fontSize: 20, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                  <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
                     3 cards active • 20% overall utilization across ₹4L total limit.
                   </p>
                   <div style={{ marginTop: 12 }}>
@@ -319,14 +319,14 @@ export default function Spend() {
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have 3 credit cards — HDFC Regalia (₹45k used), ICICI Amazon (₹12.1k used), Gold Member (₹24.75k used). Help me optimize which card to use for what." } }) }}
-                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Optimize Cards</span>
+                      <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Optimize Cards</span>
                     </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={22} strokeWidth={3} />
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} strokeWidth={3} />
                     </div>
                   </button>
                 </div>
@@ -388,11 +388,11 @@ export default function Spend() {
             front={
               <>
                 {/* Header: Pill Label + Circle Dot */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, paddingBottom: 24, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Upcoming Expenses
                   </div>
-                  <div style={{ position: 'relative', width: 52, height: 52, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
                   </div>
                 </div>
@@ -433,14 +433,14 @@ export default function Spend() {
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have ₹2.8L in expenses coming up over 90 days: School fee ₹42k (funded), Insurance ₹28k (₹11k short), Summer trip ₹1.2L (budgeted), Car service ₹15k (not planned). Help me plan." } }) }}
-                    style={{ width: '100%', padding: '24px', borderRadius: 32, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 16px 32px -8px rgba(15, 23, 42, 0.25)' }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                      <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Plan Ahead</span>
+                      <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Plan Ahead</span>
                     </div>
-                    <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <ArrowRight size={22} strokeWidth={3} />
+                    <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ArrowRight size={18} strokeWidth={3} />
                     </div>
                   </button>
                 </div>
