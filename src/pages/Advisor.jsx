@@ -631,9 +631,9 @@ export default function Advisor() {
                   { label: 'Monthly Burn', value: '₹27.4K', color: '#EF4444' },
                   { label: 'XIRR', value: '18.4%', color: '#10B981' },
                 ].map((s, i) => (
-                  <div key={i} style={{ flex: 1, background: '#fff', borderRadius: 16, padding: '12px 14px', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
+                  <div key={i} style={{ flex: 1, background: '#fff', borderRadius: 16, padding: '12px 10px', boxShadow: '0 1px 8px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{s.label}</div>
-                    <div style={{ fontSize: 18, fontWeight: 900, color: s.color, letterSpacing: -0.5 }}>{s.value}</div>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: s.color, letterSpacing: -0.5, whiteSpace: 'nowrap' }}>{s.value}</div>
                   </div>
                 ))}
               </motion.div>
@@ -666,7 +666,7 @@ export default function Advisor() {
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{action.title}</div>
-                          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500, lineHeight: 1.3 }}>{action.detail}</div>
+                          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{action.detail}</div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, flexShrink: 0 }}>
                           <span style={{ fontSize: 10, fontWeight: 800, color: action.color, background: `${action.color}10`, padding: '3px 8px', borderRadius: 6 }}>{action.impact}</span>
@@ -703,7 +703,7 @@ export default function Advisor() {
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 1 }}>{item.title}</div>
-                          <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500, lineHeight: 1.3 }}>{item.detail}</div>
+                          <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.detail}</div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, flexShrink: 0 }}>
                           <span style={{ fontSize: 9, fontWeight: 800, color: item.color, textTransform: 'uppercase', letterSpacing: 0.5, background: `${item.color}10`, padding: '2px 8px', borderRadius: 6 }}>{item.label}</span>
@@ -914,8 +914,8 @@ export default function Advisor() {
           bottom: 'calc(72px + env(safe-area-inset-bottom, 8px))', 
           left: '50%', 
           transform: 'translateX(-50%)',
-          width: 'calc(100% - 32px)', 
-          maxWidth: 400, 
+          width: 'min(calc(100% - 32px), 398px)', 
+          maxWidth: 398, 
           zIndex: 50
         }}>
           <div style={{ 

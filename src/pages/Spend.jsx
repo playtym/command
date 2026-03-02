@@ -194,8 +194,8 @@ export default function Spend() {
 
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
-                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         ₹17.6k Remaining
                       </div>
                     </div>
@@ -312,8 +312,8 @@ export default function Spend() {
 
                 {/* Callout + CTA pinned to bottom */}
                 <div style={{ marginTop: 'auto' }}>
-                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       20% Used • All Healthy
                     </div>
                   </div>
@@ -426,8 +426,8 @@ export default function Spend() {
 
                 {/* Callout + CTA pinned to bottom */}
                 <div style={{ marginTop: 'auto' }}>
-                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       ⚠️ 2 expenses need funding
                     </div>
                   </div>
@@ -472,8 +472,8 @@ export default function Spend() {
                       </div>
                       <Bar value={Math.max(exp.pct, 3)} max={100} color={exp.color} h={5} delay={i * 0.1} />
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>{exp.source}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: exp.pct >= 100 ? '#10B981' : '#64748B' }}>{exp.detail}</span>
+                        <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600, whiteSpace: 'nowrap' }}>{exp.source}</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: exp.pct >= 100 ? '#10B981' : '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '55%', textAlign: 'right' }}>{exp.detail}</span>
                       </div>
                     </div>
                   ))}
@@ -513,8 +513,8 @@ export default function Spend() {
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
-                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
+                <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.subtitle}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                 <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>

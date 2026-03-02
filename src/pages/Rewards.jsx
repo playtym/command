@@ -146,8 +146,8 @@ export default function Rewards() {
 
                 {/* Callout + CTA */}
                 <div style={{ marginTop: 'auto' }}>
-                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       🏆 3 milestones earned
                     </div>
                   </div>
@@ -184,11 +184,11 @@ export default function Rewards() {
                   ].map((b, i) => (
                     <div key={i} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ width: 8, height: 8, borderRadius: 4, background: b.color }} />
-                          <span style={{ fontSize: 14, fontWeight: 800 }}>{b.label}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: 4, background: b.color, flexShrink: 0 }} />
+                          <span style={{ fontSize: 13, fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.label}</span>
                         </div>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: b.color }}>{b.value}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: b.color, whiteSpace: 'nowrap', flexShrink: 0, marginLeft: 8 }}>{b.value}</span>
                       </div>
                       <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, marginTop: 3 }}>{b.detail}</div>
                     </div>
@@ -245,8 +245,8 @@ export default function Rewards() {
 
                 {/* Callout + CTA */}
                 <div style={{ marginTop: 'auto' }}>
-                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       ⚡ 700 pts available
                     </div>
                   </div>
@@ -289,7 +289,7 @@ export default function Rewards() {
                       </div>
                       <Bar value={c.progress} max={100} color={c.color} h={5} delay={i * 0.1} />
                       <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, marginTop: 4 }}>{c.rule}</div>
-                      <div style={{ fontSize: 11, color: '#0F172A', fontWeight: 700, marginTop: 3 }}>💡 {c.tip}</div>
+                      <div style={{ fontSize: 11, color: '#0F172A', fontWeight: 700, marginTop: 3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>💡 {c.tip}</div>
                     </div>
                   ))}
                 </div>
@@ -346,8 +346,8 @@ export default function Rewards() {
 
                 {/* Callout + CTA */}
                 <div style={{ marginTop: 'auto' }}>
-                  <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                  <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       💰 ₹4.2k more possible this year
                     </div>
                   </div>

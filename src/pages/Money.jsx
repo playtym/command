@@ -9,12 +9,75 @@ import { Page, ScrollRow, stagger } from '../components/UI'
 import { Sparkline, Donut, SegmentBar, Bar, Ring } from '../components/Charts'
 
 /* ─── Data ─── */
-const holdings = [
-  { name: 'Parag Parikh Flexi', type: 'Equity MF', invested: 1450000, current: 1822000, sip: 15000, trend: [172, 174, 176, 178, 177, 180, 182] },
-  { name: 'Quant Small Cap', type: 'Equity MF', invested: 760000, current: 1244000, sip: 10000, trend: [108, 112, 116, 118, 120, 122, 124] },
-  { name: 'HDFC MidCap Opps', type: 'Equity MF', invested: 580000, current: 810000, sip: 10000, trend: [74, 76, 77, 79, 78, 80, 81] },
-  { name: 'SGB 2028', type: 'Gold Bond', invested: 480000, current: 550000, sip: 0, trend: [52, 53, 54, 55, 55, 56, 55] },
+const accounts = [
+  {
+    category: 'Bank Accounts',
+    icon: '🏦',
+    color: '#3B82F6',
+    items: [
+      { name: 'HDFC Salary A/c', detail: '••6842', value: 285000 },
+      { name: 'SBI Savings', detail: '••4190', value: 115000 },
+    ]
+  },
+  {
+    category: 'Mutual Funds',
+    icon: '📈',
+    color: '#4F46E5',
+    items: [
+      { name: 'Parag Parikh Flexi', detail: 'SIP ₹15k', value: 1822000, ret: 25.7 },
+      { name: 'Quant Small Cap', detail: 'SIP ₹10k', value: 1244000, ret: 63.7 },
+      { name: 'HDFC MidCap Opps', detail: 'SIP ₹10k', value: 810000, ret: 39.7 },
+    ]
+  },
+  {
+    category: 'Brokerage / Demat',
+    icon: '💹',
+    color: '#10B981',
+    items: [
+      { name: 'Zerodha', detail: '12 Stocks', value: 620000, ret: 18.4 },
+      { name: 'Groww', detail: '5 ETFs', value: 180000, ret: 12.1 },
+    ]
+  },
+  {
+    category: 'FDs & Bonds',
+    icon: '🔒',
+    color: '#0EA5E9',
+    items: [
+      { name: 'SBI FD', detail: 'Mat. Dec 2025', value: 500000 },
+      { name: 'SGB 2028', detail: 'Gold Bond', value: 550000 },
+    ]
+  },
+  {
+    category: 'Insurance',
+    icon: '🛡️',
+    color: '#8B5CF6',
+    items: [
+      { name: 'HDFC Term Plan', detail: '₹1Cr Cover', value: null },
+      { name: 'Star Health', detail: '₹10L Cover', value: null },
+    ]
+  },
+  {
+    category: 'Real Estate',
+    icon: '🏠',
+    color: '#E11D48',
+    items: [
+      { name: '2BHK Pune', detail: 'Self-occupied', value: 5000000 },
+    ]
+  },
+  {
+    category: 'Loans & Liabilities',
+    icon: '💳',
+    color: '#EF4444',
+    items: [
+      { name: 'Home Loan (HDFC)', detail: 'EMI ₹28k/mo', value: 1200000 },
+      { name: 'Credit Card (ICICI)', detail: 'Due 15th', value: 45000 },
+    ]
+  },
 ]
+
+const totalAssets = 1404600 // ₹1.40Cr
+const totalLiabilities = 1245000 // ₹12.45L
+const netWorth = totalAssets - totalLiabilities // ~₹1.28Cr
 
 const netWorthGrowth = [38, 40, 42, 44, 47, 50, 54, 57, 61, 65, 70, 73, 75]
 
@@ -165,22 +228,26 @@ export default function Money() {
                   {/* Hero Content */}
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Net Worth</div>
-                    <h4 style={{ fontSize: 42, fontWeight: 900, color: '#0F172A', letterSpacing: -2, lineHeight: 1, marginBottom: 4 }}>
+                    <h4 style={{ fontSize: 'clamp(40px, 11vw, 48px)', fontWeight: 900, color: '#0F172A', letterSpacing: -2.5, lineHeight: 1, marginBottom: 4 }}>
                       ₹1.25Cr
                     </h4>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#10B981', marginBottom: 14 }}>
-                      +₹16.8L profit • 18% XIRR
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#64748B', marginBottom: 12 }}>
+                      Assets ₹1.40Cr <span style={{ color: '#94A3B8' }}>−</span> Liabilities ₹12.45L
                     </div>
 
-                    {/* Liquid vs Fixed split */}
-                    <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-                      <div style={{ flex: 1, background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '8px 12px' }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Liquid</div>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: '#4F46E5', letterSpacing: -1 }}>₹75L</div>
+                    {/* Liquid / Fixed / Liabilities split */}
+                    <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+                      <div style={{ flex: 1, background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '7px 10px' }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Liquid</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: '#4F46E5', letterSpacing: -1 }}>₹75L</div>
                       </div>
-                      <div style={{ flex: 1, background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '8px 12px' }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Fixed Assets</div>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: '#E11D48', letterSpacing: -1 }}>₹50L</div>
+                      <div style={{ flex: 1, background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '7px 10px' }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Fixed</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: '#E11D48', letterSpacing: -1 }}>₹50L</div>
+                      </div>
+                      <div style={{ flex: 1, background: 'rgba(239,68,68,0.08)', borderRadius: 12, padding: '7px 10px' }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: 0.5 }}>Liabilities</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: '#EF4444', letterSpacing: -1 }}>₹12.4L</div>
                       </div>
                     </div>
 
@@ -188,9 +255,9 @@ export default function Money() {
                     <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: '8px 12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                         <span style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>12-Month Growth</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>75% to ₹1Cr</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981' }}>+₹16.8L • 18% XIRR</span>
                       </div>
-                      <Sparkline data={netWorthGrowth} width={280} height={64} color="#4F46E5" strokeW={2} />
+                      <Sparkline data={netWorthGrowth} width={280} height={56} color="#4F46E5" strokeW={2} />
                     </div>
                   </div>
 
@@ -219,48 +286,63 @@ export default function Money() {
               back={
                 <>
                   {/* Back: Donut Chart + Breakdown */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                     <div>
                       <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Wealth Map</span>
-                      <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>₹1.25Cr total net worth</p>
+                      <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>Assets ₹1.40Cr − Liabilities ₹12.4L</p>
                     </div>
                     <Donut size={80} stroke={10} segments={[
-                      { value: 40, color: '#E11D48' },
-                      { value: 31, color: '#4F46E5' },
-                      { value: 8, color: '#0EA5E9' },
-                      { value: 5, color: '#F59E0B' },
-                      { value: 5, color: '#10B981' },
-                      { value: 2, color: '#8B5CF6' },
+                      { value: 36, color: '#E11D48' },
+                      { value: 28, color: '#4F46E5' },
+                      { value: 7, color: '#0EA5E9' },
+                      { value: 4, color: '#F59E0B' },
+                      { value: 9, color: '#10B981' },
+                      { value: 6, color: '#3B82F6' },
+                      { value: 1, color: '#8B5CF6' },
+                      { value: 9, color: '#EF4444' },
                     ]}>
                       <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>1.25Cr</span>
                     </Donut>
                   </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {/* Assets */}
                     {[
-                      { label: 'Real Estate', value: '₹50L', pct: 40, color: '#E11D48', xirr: '8.5%' },
-                      { label: 'Equity MFs', value: '₹38.8L', pct: 31, color: '#4F46E5', xirr: '22.1%' },
-                      { label: 'Debt / FDs', value: '₹10.0L', pct: 8, color: '#0EA5E9', xirr: '7.4%' },
-                      { label: 'Gold (SGB)', value: '₹5.5L', pct: 5, color: '#F59E0B', xirr: '14.8%' },
-                      { label: 'Liquid + Cash', value: '₹6.0L', pct: 5, color: '#10B981', xirr: '5.2%' },
-                      { label: 'NPS', value: '₹1.7L', pct: 2, color: '#8B5CF6', xirr: '11.6%' },
+                      { label: 'Real Estate', value: '₹50L', pct: 36, color: '#E11D48', xirr: '8.5%' },
+                      { label: 'Equity MFs', value: '₹38.8L', pct: 28, color: '#4F46E5', xirr: '22.1%' },
+                      { label: 'FDs & Bonds', value: '₹10.5L', pct: 7, color: '#0EA5E9', xirr: '7.4%' },
+                      { label: 'Gold (SGB)', value: '₹5.5L', pct: 4, color: '#F59E0B', xirr: '14.8%' },
+                      { label: 'Stocks & ETFs', value: '₹8.0L', pct: 6, color: '#10B981', xirr: '16.2%' },
+                      { label: 'Bank / Cash', value: '₹4.0L', pct: 3, color: '#3B82F6', xirr: '4.0%' },
+                      { label: 'NPS', value: '₹1.7L', pct: 1, color: '#8B5CF6', xirr: '11.6%' },
                     ].map((item, i) => (
                       <div key={i}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <div style={{ width: 8, height: 8, borderRadius: 4, background: item.color }} />
-                            <span>{item.label}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 3 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, flex: 1 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 4, background: item.color, flexShrink: 0 }} />
+                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.label}</span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#16A34A' }}>{item.xirr}</span>
-                            <span>{item.value} <span style={{ color: '#94A3B8', fontWeight: 500 }}>({item.pct}%)</span></span>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexShrink: 0 }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: '#16A34A' }}>{item.xirr}</span>
+                            <span style={{ whiteSpace: 'nowrap' }}>{item.value} <span style={{ color: '#94A3B8', fontWeight: 500 }}>({item.pct}%)</span></span>
                           </div>
                         </div>
-                        <Bar value={item.pct} max={100} color={item.color} h={5} delay={i * 0.1} />
+                        <Bar value={item.pct} max={100} color={item.color} h={4} delay={i * 0.08} />
                       </div>
                     ))}
+                    {/* Liabilities divider */}
+                    <div style={{ borderTop: '1px dashed rgba(239,68,68,0.3)', paddingTop: 6 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 3 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: 4, background: '#EF4444', flexShrink: 0 }} />
+                          <span style={{ color: '#EF4444' }}>Liabilities</span>
+                        </div>
+                        <span style={{ color: '#EF4444', whiteSpace: 'nowrap' }}>−₹12.4L <span style={{ color: '#94A3B8', fontWeight: 500 }}>(9%)</span></span>
+                      </div>
+                      <Bar value={9} max={100} color="#EF4444" h={4} delay={0.7} />
+                    </div>
                   </div>
-                  {/* Growth sparkline */}
-                  <div style={{ paddingTop: 16, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  {/* Bottom stats */}
+                  <div style={{ paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', gap: 20 }}>
                       <div>
                         <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>SIP/MO</div>
@@ -305,7 +387,7 @@ export default function Money() {
                         { value: 7, color: '#F59E0B' },
                         { value: 8, color: '#10B981' },
                       ]} />
-                      <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                         {[
                           { l: 'Eq', p: 65, c: '#4F46E5' },
                           { l: 'Debt', p: 17, c: '#0EA5E9' },
@@ -324,7 +406,7 @@ export default function Money() {
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
                     <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         ⏳ Long-term 60% • Short needs +₹3L
                       </div>
                     </div>
@@ -389,14 +471,14 @@ export default function Money() {
                     ].map((bucket, i) => (
                       <div key={i} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ width: 8, height: 8, borderRadius: 4, background: bucket.color }} />
-                            <span style={{ fontSize: 14, fontWeight: 800 }}>{bucket.label}</span>
-                            <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{bucket.horizon}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, flex: 1 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 4, background: bucket.color, flexShrink: 0 }} />
+                            <span style={{ fontSize: 13, fontWeight: 800, whiteSpace: 'nowrap' }}>{bucket.label}</span>
+                            <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, whiteSpace: 'nowrap' }}>{bucket.horizon}</span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: bucket.xirr.startsWith('-') ? '#DC2626' : '#16A34A' }}>{bucket.xirr} XIRR</span>
-                            <span style={{ fontSize: 14, fontWeight: 800, color: bucket.color }}>{bucket.value}</span>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexShrink: 0 }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: bucket.xirr.startsWith('-') ? '#DC2626' : '#16A34A', whiteSpace: 'nowrap' }}>{bucket.xirr}</span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: bucket.color, whiteSpace: 'nowrap' }}>{bucket.value}</span>
                           </div>
                         </div>
                         {/* Asset-class split bar */}
@@ -475,8 +557,8 @@ export default function Money() {
 
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
-                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         +8.2% Alpha vs Nifty
                       </div>
                     </div>
@@ -497,32 +579,39 @@ export default function Money() {
               }
               back={
                 <>
-                  {/* Back: Fund Performance with Sparklines */}
-                  <div style={{ marginBottom: 16 }}>
-                    <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>Fund Returns</span>
-                    <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>1-year performance with trend</p>
+                  {/* Back: Simple fund action list */}
+                  <div style={{ marginBottom: 10 }}>
+                    <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: -0.8 }}>What To Do</span>
+                    <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 2 }}>AI verdict on each fund</p>
                   </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {[
-                      { name: 'Quant Small Cap', ret: '+64%', val: '₹12.4L', trend: [60, 72, 68, 85, 90, 98, 108, 112, 118, 120, 124], color: '#10B981', risk: 'High' },
-                      { name: 'HDFC MidCap', ret: '+41%', val: '₹8.1L', trend: [58, 62, 64, 68, 72, 74, 76, 78, 80, 81], color: '#F59E0B', risk: 'Med' },
-                      { name: 'PPFAS Flexi', ret: '+28%', val: '₹18.2L', trend: [142, 148, 152, 158, 162, 168, 172, 176, 180, 182], color: '#4F46E5', risk: 'Low' },
-                      { name: 'SGB 2028', ret: '+14%', val: '₹5.5L', trend: [48, 49, 50, 51, 52, 53, 54, 55, 55], color: '#D97706', risk: 'Low' },
-                    ].map((fund, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'rgba(255,255,255,0.5)', borderRadius: 14 }}>
+                      { name: 'Quant Small Cap', ret: '+64%', val: '₹12.4L', tag: '📈 Book Profit', tagBg: '#FEF3C7', tagColor: '#92400E', hint: 'High risk — trim ₹2L' },
+                      { name: 'HDFC MidCap',     ret: '+41%', val: '₹8.1L',  tag: '✅ Hold',        tagBg: '#ECFDF5', tagColor: '#065F46', hint: null },
+                      { name: 'PPFAS Flexi',     ret: '+28%', val: '₹18.2L', tag: '✅ Hold',        tagBg: '#ECFDF5', tagColor: '#065F46', hint: null },
+                      { name: 'SGB 2028',        ret: '+14%', val: '₹5.5L',  tag: '🛡️ Steady',     tagBg: '#F1F5F9', tagColor: '#475569', hint: null },
+                      { name: 'ICICI Pru Value',  ret: '+4%',  val: '₹3.0L',  tag: '👀 Watch',      tagBg: '#FFFBEB', tagColor: '#92400E', hint: 'Below benchmark' },
+                      { name: 'Axis Bluechip',   ret: '-3%',  val: '₹2.1L',  tag: '🚫 Exit',       tagBg: '#FEF2F2', tagColor: '#991B1B', hint: 'Negative return' },
+                    ].map((f, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'rgba(255,255,255,0.55)', borderRadius: 14 }}>
+                        {/* Left: Fund info */}
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: '#1E293B', marginBottom: 2 }}>{fund.name}</div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{ fontSize: 18, fontWeight: 900, color: fund.color }}>{fund.ret}</span>
-                            <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{fund.val}</span>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A', lineHeight: 1.2 }}>{f.name}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+                            <span style={{ fontSize: 16, fontWeight: 900, color: f.ret.startsWith('-') ? '#DC2626' : '#059669' }}>{f.ret}</span>
+                            <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{f.val}</span>
                           </div>
+                          {f.hint && <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, marginTop: 2 }}>{f.hint}</div>}
                         </div>
-                        <Sparkline data={fund.trend} width={100} height={28} color={fund.color} strokeW={2} />
+                        {/* Right: Action badge */}
+                        <div style={{ background: f.tagBg, padding: '5px 10px', borderRadius: 10, fontSize: 11, fontWeight: 800, color: f.tagColor, whiteSpace: 'nowrap', flexShrink: 0 }}>{f.tag}</div>
                       </div>
                     ))}
                   </div>
-                  <div style={{ padding: 14, background: '#ECFDF5', borderRadius: 14, marginTop: 'auto', fontSize: 13, fontWeight: 700, color: '#065F46', lineHeight: 1.4 }}>
-                    ✅ Portfolio Sharpe: 1.7 — Above Nifty benchmark (1.2)
+
+                  <div style={{ padding: 10, background: '#ECFDF5', borderRadius: 12, marginTop: 8, fontSize: 11, fontWeight: 700, color: '#065F46', lineHeight: 1.4 }}>
+                    ✅ 4 of 6 funds in green · Portfolio Sharpe 1.7 vs Nifty 1.2
                   </div>
                 </>
               }
@@ -569,8 +658,8 @@ export default function Money() {
 
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
-                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 14, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         🏠 House ₹12L away • 2.8 yrs
                       </div>
                     </div>
@@ -704,38 +793,71 @@ export default function Money() {
         </div>
       </motion.div>
 
-      {/* ─── Holdings List ─── */}
+      {/* ─── Account-wise Summary ─── */}
       <motion.div variants={stagger.item} style={{ marginTop: 32, marginBottom: 120 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Top Holdings
+            All Accounts
           </h3>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#64748B' }}>{accounts.reduce((n, g) => n + g.items.length, 0)} accounts</span>
         </div>
 
-        <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 8, boxShadow: '0 1px 8px rgba(0,0,0,0.04)', border: 'none' }}>
-          {holdings.map((h, i) => (
-            <div key={i} style={{ 
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-              padding: '16px 12px',
-              borderBottom: i < holdings.length - 1 ? '1px solid #F1F5F9' : 'none'
-            }}>
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>{h.name}</div>
-                <div style={{ fontSize: 12, color: '#94A3B8' }}>{h.type}{h.sip > 0 ? ` • SIP ₹${h.sip/1000}k` : ''}</div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>₹{(h.current/100000).toFixed(1)}L</div>
-                <div style={{ 
-                  fontSize: 12, fontWeight: 600, 
-                  color: h.current > h.invested ? '#10B981' : '#EF4444',
-                  display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {accounts.map((group, gi) => {
+            const groupTotal = group.items.reduce((s, it) => s + (it.value || 0), 0)
+            const isLiability = group.category.toLowerCase().includes('liabilit') || group.category.toLowerCase().includes('loan')
+            return (
+              <div key={gi} style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
+                {/* Category Header */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '14px 16px',
+                  borderBottom: '1px solid #F1F5F9',
+                  background: isLiability ? 'rgba(239,68,68,0.04)' : 'rgba(0,0,0,0.01)'
                 }}>
-                  {h.current > h.invested ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                  {Math.round(((h.current - h.invested)/h.invested)*100)}%
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontSize: 18 }}>{group.icon}</span>
+                    <span style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>{group.category}</span>
+                  </div>
+                  {groupTotal > 0 && (
+                    <span style={{ fontSize: 14, fontWeight: 800, color: isLiability ? '#EF4444' : '#0F172A' }}>
+                      {isLiability ? '−' : ''}₹{groupTotal >= 100000 ? `${(groupTotal / 100000).toFixed(1)}L` : `${(groupTotal / 1000).toFixed(0)}k`}
+                    </span>
+                  )}
                 </div>
+                {/* Items */}
+                {group.items.map((item, ii) => (
+                  <div key={ii} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '13px 16px',
+                    borderBottom: ii < group.items.length - 1 ? '1px solid #F8FAFC' : 'none'
+                  }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+                      <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{item.detail}</div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 12 }}>
+                      {item.value != null ? (
+                        <>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: isLiability ? '#EF4444' : '#0F172A' }}>
+                            {isLiability ? '−' : ''}₹{item.value >= 100000 ? `${(item.value / 100000).toFixed(1)}L` : `${(item.value / 1000).toFixed(0)}k`}
+                          </div>
+                          {item.ret != null && (
+                            <div style={{ fontSize: 11, fontWeight: 700, color: item.ret >= 0 ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
+                              {item.ret >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
+                              {item.ret}%
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <span style={{ fontSize: 12, fontWeight: 700, color: group.color, background: `${group.color}12`, padding: '4px 10px', borderRadius: 100 }}>Active</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </motion.div>
       </motion.div>

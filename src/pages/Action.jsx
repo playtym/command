@@ -466,8 +466,8 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
                     <div style={{
                         background: '#FEF08A', 
                         border: '2px solid #0F172A',
-                        borderRadius: 14, padding: '10px 16px',
-                        fontSize: 16, fontWeight: 800, color: '#0F172A',
+                        borderRadius: 14, padding: '10px 14px',
+                        fontSize: 14, fontWeight: 800, color: '#0F172A',
                         boxShadow: '3px 3px 0px #0F172A'
                     }}>
                         {action.impact}
@@ -480,7 +480,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
                 <button 
                     onClick={(e) => { e.stopPropagation(); onSwipe(1) }}
                     style={{ 
-                        width: '100%', padding: '24px',
+                        width: '100%', padding: '18px 20px',
                         borderRadius: 32,
                         background: '#0F172A', 
                         color: 'white',
@@ -492,7 +492,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
-                        <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>{action.cta}</span>
+                        <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: -0.5, whiteSpace: 'nowrap' }}>{action.cta}</span>
                     </div>
                     
                     <div style={{ 
@@ -542,7 +542,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
                 }}>
                     {/* Left Column (Current) */}
                     <div style={{ background: '#F8FAFC', padding: '16px 12px' }}>
-                        <div style={{ marginBottom: 16, height: 60 }}>
+                        <div style={{ marginBottom: 16, minHeight: 60 }}>
                             <div style={{ fontSize: 10, color: '#EF4444', fontWeight: 700, letterSpacing: 0.5, marginBottom: 4 }}>{action.comparison?.left.type}</div>
                             <div style={{ fontSize: 13, fontWeight: 500, color: '#0F172A', lineHeight: 1.3 }}>{action.comparison?.left.name}</div>
                             <div style={{ fontSize: 13, color: '#64748B', lineHeight: 1.3 }}>{action.comparison?.left.subtitle}</div>
@@ -563,7 +563,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
 
                     {/* Right Column (Recommended) */}
                     <div style={{ background: '#ECFDF5', padding: '16px 12px', borderLeft: '1px solid rgba(0,0,0,0.08)' }}>
-                        <div style={{ marginBottom: 16, height: 60 }}>
+                        <div style={{ marginBottom: 16, minHeight: 60 }}>
                              <div style={{ fontSize: 10, color: '#059669', fontWeight: 700, letterSpacing: 0.5, marginBottom: 4 }}>{action.comparison?.right.type}</div>
                              <div style={{ fontSize: 13, fontWeight: 500, color: '#0F172A', lineHeight: 1.3 }}>{action.comparison?.right.name}</div>
                              <div style={{ fontSize: 13, color: '#64748B', lineHeight: 1.3 }}>{action.comparison?.right.subtitle}</div>
@@ -583,12 +583,13 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
                 {/* Recommendation Box */}
                 <div style={{ 
                     border: '1px solid #A7F3D0', background: '#F0FDF4', 
-                    borderRadius: 12, padding: 16, marginBottom: 20
+                    borderRadius: 12, padding: 16, marginBottom: 20,
+                    overflow: 'auto', maxHeight: 140
                 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#059669', marginBottom: 10, letterSpacing: 1, textTransform: 'uppercase' }}>
                         {action.recommendation?.title}
                     </div>
-                    <ul style={{ margin: 0, paddingLeft: 16, color: '#065F46', fontSize: 12, lineHeight: '1.5', fontWeight: 400, listStyle: 'none' }}>
+                    <ul style={{ margin: 0, paddingLeft: 16, color: '#065F46', fontSize: 11, lineHeight: '1.5', fontWeight: 400, listStyle: 'none' }}>
                         {action.recommendation?.points.map((point, i) => (
                             <li key={i} style={{ marginBottom: 8, color: '#065F46', display: 'flex', alignItems: 'flex-start' }}>
                                 <span style={{ color: '#10B981', marginRight: 8, fontSize: 16, lineHeight: 1 }}>•</span> 
@@ -705,7 +706,7 @@ export default function Action() {
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1, type: 'spring' }}
                 style={{ fontSize: 56, marginBottom: 16 }}>🎉</motion.div>
               <h2 style={{ fontSize: 11, color: '#94A3B8', fontWeight: 800, textTransform: 'uppercase', marginBottom: 20, letterSpacing: 2 }}>Total Money Saved</h2>
-              <AnimNum value={totalMoneySaved} prefix="₹" style={{ fontSize: 72, fontWeight: 900, color: '#0F172A', letterSpacing: -4, lineHeight: 1 }} />
+              <AnimNum value={totalMoneySaved} prefix="₹" style={{ fontSize: 'clamp(48px, 14vw, 72px)', fontWeight: 900, color: '#0F172A', letterSpacing: -4, lineHeight: 1 }} />
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
                 style={{ marginTop: 28, padding: '10px 24px', background: '#ECFDF5', borderRadius: 100, color: '#059669', fontSize: 14, fontWeight: 800 }}>
                 You're doing great, Ankur! 🚀
@@ -727,7 +728,7 @@ export default function Action() {
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}
               style={{ fontSize: 56, marginBottom: 16 }}>😔</motion.div>
             <h2 style={{ fontSize: 11, color: '#B91C1C', fontWeight: 800, textTransform: 'uppercase', marginBottom: 20, letterSpacing: 2 }}>But you could still save</h2>
-            <AnimNum value={totalPotentialSavings} prefix="₹" suffix="/yr" style={{ fontSize: 64, fontWeight: 900, color: '#EF4444', letterSpacing: -4, lineHeight: 1 }} />
+            <AnimNum value={totalPotentialSavings} prefix="₹" suffix="/yr" style={{ fontSize: 'clamp(42px, 12vw, 64px)', fontWeight: 900, color: '#EF4444', letterSpacing: -4, lineHeight: 1 }} />
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
               style={{ fontSize: 17, color: '#7F1D1D', maxWidth: 280, lineHeight: 1.6, fontWeight: 600, marginTop: 20 }}>
               Lost to idle cash, missed renewals & unclaimed tax benefits.

@@ -115,7 +115,7 @@ export default function Dashboard() {
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <div style={{ 
-          padding: '36px 32px 32px', 
+          padding: 'clamp(24px, 5vw, 36px) clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px)', 
           background: '#FFFFFF', // New Clean White  
           borderRadius: 40,
           border: '1px solid rgba(0,0,0,0.08)',
@@ -162,7 +162,7 @@ export default function Dashboard() {
           </div>
 
           <div>
-             <h2 style={{ fontSize: 64, fontWeight: 900, letterSpacing: -3.5, marginBottom: 4, lineHeight: 0.9, color: '#0F172A' }}>
+             <h2 style={{ fontSize: 'clamp(48px, 14vw, 64px)', fontWeight: 900, letterSpacing: -3.5, marginBottom: 4, lineHeight: 0.9, color: '#0F172A' }}>
                 ₹75.0<span style={{ opacity: 0.4, fontSize: 36, fontWeight: 700, marginLeft: 4 }}>L</span>
              </h2>
              <p style={{ fontSize: 16, fontWeight: 600, color: '#64748B', marginTop: 12 }}>+₹12.4k today</p>
@@ -197,10 +197,10 @@ export default function Dashboard() {
           {urgentItems.map((item) => (
             <div key={item.id} 
               style={{ 
-                padding: 24, 
+                padding: 18, 
                 background: '#FFFFFF',
                 borderRadius: 28,
-                display: 'flex', alignItems: 'center', gap: 20,
+                display: 'flex', alignItems: 'center', gap: 14,
                 boxShadow: '0 24px 48px -12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
                 border: 'none',
                 position: 'relative',
@@ -215,17 +215,18 @@ export default function Dashboard() {
               }} />
 
               <div style={{ 
-                width: 56, height: 56, borderRadius: 20, 
+                width: 44, height: 44, borderRadius: 16, 
                 background: item.bgColor, 
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: item.color,
                 zIndex: 1,
+                flexShrink: 0,
                 boxShadow: `0 8px 16px -4px ${item.bgColor}40`
               }}>
-                <item.icon size={28} strokeWidth={2.5} />
+                <item.icon size={22} strokeWidth={2.5} />
               </div>
-              <div style={{ flex: 1, zIndex: 1 }}>
-                <h4 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', letterSpacing: -0.6, marginBottom: 4 }}>{item.title}</h4>
+              <div style={{ flex: 1, zIndex: 1, minWidth: 0 }}>
+                <h4 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', letterSpacing: -0.6, marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h4>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                    <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.bgColor}40`, padding: '4px 10px', borderRadius: 100, letterSpacing: 0.5, backdropFilter: 'blur(4px)' }}>
                       {item.action}
@@ -259,11 +260,11 @@ export default function Dashboard() {
             <div 
               key={i}
               style={{ 
-                minWidth: 280, 
+                minWidth: 260, 
                 scrollSnapAlign: 'center',
                 background: action.color === '#FFFFFF' ? '#1E293B' : '#FFFFFF',
                 borderRadius: 40,
-                padding: 32,
+                padding: 'clamp(20px, 5vw, 32px)',
                 border: 'none',
                 boxShadow: '0 24px 48px -12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
                 position: 'relative',
@@ -293,7 +294,7 @@ export default function Dashboard() {
               </div>
               
               <div style={{ marginBottom: 32, position: 'relative', zIndex: 1 }}>
-                 <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: -2, lineHeight: 1, marginBottom: 8 }}>{action.value}</div>
+                 <div style={{ fontSize: 'clamp(28px, 8vw, 36px)', fontWeight: 900, letterSpacing: -2, lineHeight: 1, marginBottom: 8 }}>{action.value}</div>
                  <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.7 }}>{action.subtitle}</div>
               </div>
 
