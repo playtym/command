@@ -345,3 +345,149 @@ export function Btn({ children, color = 'var(--orange)', style, onClick, full })
       }}>{children}</motion.button>
   )
 }
+
+/* ═══════ ACTION CHIP CARDS — light tint / white half split ═══════ */
+export function ActionCard({ iconColor = '#64748B', title, subtitle, rightLabel, rightColor, onClick }) {
+  const [pref, ...rest] = title.includes(':') ? title.split(':') : ['', title];
+  const category = pref.trim();
+  const finalTitle = rest.length > 0 ? rest.join(':').trim() : title;
+  const accent = rightColor || iconColor;
+
+  return (
+    <motion.div
+      whileTap={onClick ? { scale: 0.97 } : undefined}
+      onClick={onClick}
+      style={{
+        flex: '0 0 210px', width: 210,
+        borderRadius: 20,
+        overflow: 'hidden',
+        border: '1px solid rgba(0,0,0,0.06)',
+        boxShadow: '0 12px 24px -6px rgba(0,0,0,0.05), 0 4px 8px -2px rgba(0,0,0,0.03)',
+        background: '#fff',
+        cursor: onClick ? 'pointer' : 'default',
+        display: 'flex', flexDirection: 'column',
+        scrollSnapAlign: 'start',
+      }}
+    >
+      {/* ── Tinted top half ── */}
+      <div style={{
+        background: `${accent}12`,
+        padding: '14px 14px',
+        minHeight: 60,
+        position: 'relative',
+        borderBottom: `1px solid ${accent}15`
+      }}>
+        {/* Color accent bar */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: accent }} />
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {category ? (
+            <div style={{ fontSize: 10, fontWeight: 800, color: accent, textTransform: 'uppercase', letterSpacing: 1.2 }}>
+              {category}
+            </div>
+          ) : <div />}
+          {rightLabel && (
+            <div style={{
+              display: 'inline-flex', alignItems: 'center',
+              background: '#fff', color: accent,
+              borderRadius: 100, padding: '4px 10px',
+              fontSize: 11, fontWeight: 800, letterSpacing: 0.4,
+              boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+              border: `1px solid ${accent}25`,
+            }}>
+              {rightLabel}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── White bottom half ── */}
+      <div style={{
+        padding: '14px 14px 16px',
+        flex: 1,
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+      }}>
+        <div>
+          <div style={{
+            fontSize: 15, fontWeight: 800, color: '#0F172A',
+            lineHeight: 1.3, letterSpacing: -0.3,
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+            marginBottom: 5,
+          }}>
+            {finalTitle}
+          </div>
+          <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600, lineHeight: 1.4 }}>
+            {subtitle}
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+          <div style={{
+            width: 24, height: 24, borderRadius: '50%',
+            background: `${accent}12`, border: `1px solid ${accent}25`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+              <path d="M2 5.5H9M6 2.5L9 5.5L6 8.5" stroke={accent} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+
+/* ═══════ SECTION LABEL ═══════ */
+export function SectionLabel({ children, right, color = '#F97316' }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, paddingLeft: 4 }}>
+      <h3 style={{ fontSize: 13, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
+        {children}
+      </h3>
+      {right && <span style={{ fontSize: 13, fontWeight: 700, color: '#64748B' }}>{right}</span>}
+    </div>
+  )
+}
+
+export function ListRow({ icon: Icon, iconColor, title, subtitle, rightLabel, rightColor, last, onClick, children }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: '16px',
+        borderBottom: last ? 'none' : '1px solid rgba(0,0,0,0.06)',
+        cursor: onClick ? 'pointer' : 'default',
+        background: '#fff',
+      }}
+    >
+      {Icon && (
+        <div style={{ width: 40, height: 40, borderRadius: 12, background: `${iconColor}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 16 }}>
+          <Icon size={20} color={iconColor} strokeWidth={2.5} />
+        </div>
+      )}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 16, fontWeight: 600, color: '#1a1a1a', marginBottom: 2, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+          {title}
+        </div>
+        {subtitle && (
+          <div style={{ fontSize: 13, color: '#888', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            {subtitle}
+          </div>
+        )}
+      </div>
+      {(rightLabel || children) && (
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 16 }}>
+          {rightLabel && (
+            <div style={{ fontSize: 15, fontWeight: 600, color: rightColor || '#1a1a1a' }}>
+              {rightLabel}
+            </div>
+          )}
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}

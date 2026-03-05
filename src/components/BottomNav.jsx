@@ -26,7 +26,7 @@ export default function BottomNav() {
     }}>
       {tabs.map(t => {
         const active = loc.pathname === t.to
-        const color = active ? '#000' : '#999'
+        const color = active ? '#0F172A' : '#64748B'
         const Icon = t.icon
         
         // Center AI tab gets a special elevated style
@@ -38,7 +38,7 @@ export default function BottomNav() {
                 position: 'relative', marginTop: -18,
               }}>
                 <div style={{
-                  width: 52, height: 52, borderRadius: 18,
+                  width: 52, height: 52, borderRadius: 26,
                   background: active ? '#0F172A' : 'linear-gradient(135deg, #4F46E5, #7C3AED)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: active
@@ -85,7 +85,7 @@ export default function BottomNav() {
                     background: '#000',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 9, fontWeight: 700, color: '#fff',
-                    border: '2px solid var(--bg)', borderRadius: 4 
+                    border: '2px solid #F5F5F4', borderRadius: 4 
                   }}>
                     {t.badge}
                   </div>
@@ -98,7 +98,7 @@ export default function BottomNav() {
                 color: color,
                 textTransform: 'uppercase',
                 letterSpacing: 0.5,
-                opacity: active ? 1 : 0.8,
+                opacity: 1,
               }}>
                 {t.label}
               </span>

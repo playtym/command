@@ -3,74 +3,72 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { 
   ArrowUpRight, ArrowDownRight, PieChart, Activity, 
-  TrendingUp, Shield, Globe, Zap, ChevronRight, Sparkles, ArrowRight
+  TrendingUp, Shield, Globe, Zap, ChevronRight, ChevronDown, Sparkles, ArrowRight
 } from 'lucide-react'
-import { Page, ScrollRow, stagger } from '../components/UI'
+import { Page, ScrollRow, stagger, SectionLabel, ListRow, ActionCard } from '../components/UI'
 import { Sparkline, Donut, SegmentBar, Bar, Ring } from '../components/Charts'
 
 /* ─── Data ─── */
 const accounts = [
   {
-    category: 'Bank Accounts',
+    category: 'Banking',
     icon: '🏦',
     color: '#3B82F6',
     items: [
-      { name: 'HDFC Salary A/c', detail: '••6842', value: 285000 },
-      { name: 'SBI Savings', detail: '••4190', value: 115000 },
+      { name: 'HDFC Bank', detail: 'Salary A/c + FD', value: 785000, holdings: '₹2.85L savings • ₹5L FD' },
+      { name: 'SBI', detail: 'Savings + SGB', value: 665000, holdings: '₹1.15L savings • ₹5.5L Gold Bond' },
     ]
   },
   {
-    category: 'Mutual Funds',
+    category: 'Groww',
     icon: '📈',
     color: '#4F46E5',
     items: [
-      { name: 'Parag Parikh Flexi', detail: 'SIP ₹15k', value: 1822000, ret: 25.7 },
-      { name: 'Quant Small Cap', detail: 'SIP ₹10k', value: 1244000, ret: 63.7 },
-      { name: 'HDFC MidCap Opps', detail: 'SIP ₹10k', value: 810000, ret: 39.7 },
+      { name: 'Mutual Funds', detail: '3 schemes • SIP ₹35k/mo', value: 3876000, ret: 35.2, holdings: 'PPFAS Flexi ₹18.2L • Quant Small ₹12.4L • HDFC Mid ₹8.1L' },
+      { name: 'ETFs', detail: '5 ETFs', value: 180000, ret: 12.1, holdings: 'Nifty BeES • Gold BeES • Nifty Next 50 + 2 more' },
     ]
   },
   {
-    category: 'Brokerage / Demat',
+    category: 'Zerodha',
     icon: '💹',
     color: '#10B981',
     items: [
-      { name: 'Zerodha', detail: '12 Stocks', value: 620000, ret: 18.4 },
-      { name: 'Groww', detail: '5 ETFs', value: 180000, ret: 12.1 },
+      { name: 'Stocks', detail: '12 stocks', value: 520000, ret: 18.4, holdings: 'Reliance • TCS • HDFC Bank • Infosys + 8 more' },
+      { name: 'IPOs & Others', detail: '2 allotted', value: 100000, ret: 22.0, holdings: 'Swiggy IPO • Hyundai IPO' },
     ]
   },
   {
-    category: 'FDs & Bonds',
-    icon: '🔒',
-    color: '#0EA5E9',
+    category: 'NPS (NSDL)',
+    icon: '🏛️',
+    color: '#8B5CF6',
     items: [
-      { name: 'SBI FD', detail: 'Mat. Dec 2025', value: 500000 },
-      { name: 'SGB 2028', detail: 'Gold Bond', value: 550000 },
+      { name: 'Tier I', detail: 'Auto-choice aggressive', value: 170000, ret: 11.6, holdings: '75% equity • 15% corp bonds • 10% govt sec' },
     ]
   },
   {
     category: 'Insurance',
     icon: '🛡️',
-    color: '#8B5CF6',
+    color: '#6366F1',
     items: [
-      { name: 'HDFC Term Plan', detail: '₹1Cr Cover', value: null },
-      { name: 'Star Health', detail: '₹10L Cover', value: null },
+      { name: 'HDFC Life', detail: 'Term Plan • ₹1Cr cover', value: null, holdings: 'Premium ₹12k/yr • Till age 60' },
+      { name: 'Star Health', detail: 'Family Floater • ₹10L', value: null, holdings: 'Premium ₹18k/yr • 2 adults + 1 child' },
     ]
   },
   {
-    category: 'Real Estate',
+    category: 'Property',
     icon: '🏠',
     color: '#E11D48',
     items: [
-      { name: '2BHK Pune', detail: 'Self-occupied', value: 5000000 },
+      { name: '2BHK Pune', detail: 'Self-occupied', value: 5000000, holdings: 'Bought 2021 @ ₹42L • Current ₹50L est.' },
     ]
   },
   {
-    category: 'Loans & Liabilities',
+    category: 'Loans',
     icon: '💳',
     color: '#EF4444',
     items: [
-      { name: 'Home Loan (HDFC)', detail: 'EMI ₹28k/mo', value: 1200000 },
-      { name: 'Credit Card (ICICI)', detail: 'Due 15th', value: 45000 },
+      { name: 'HDFC Home Loan', detail: 'EMI ₹28k/mo • 18yr left', value: 1200000, holdings: 'Orig ₹35L • Rate 8.5% • Outstanding ₹12L' },
+      { name: 'ICICI Credit Card', detail: 'Due 15th Mar', value: 45000, holdings: 'Amazon card • Limit ₹3L • Utilised 15%' },
     ]
   },
 ]
@@ -164,8 +162,8 @@ const faceBase = {
   WebkitBackfaceVisibility: 'hidden',
   borderRadius: 32,
   padding: '24px 22px 22px',
-  border: 'none',
-  boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
+  boxShadow: '0 16px 40px -12px rgba(0,0,0,0.08)',
+  border: '1px solid rgba(255,255,255,0.7)',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
@@ -177,7 +175,7 @@ function FlipCard({ front, back, bg = '#FFFFFF' }) {
     <div style={cardStyle} onClick={() => setFlipped(f => !f)}>
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: 0.6, type: 'spring', stiffness: 260, damping: 20 }}
+        transition={{ duration: 0.7, type: 'spring', stiffness: 200, damping: 24 }}
         style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
       >
         {/* Front */}
@@ -195,14 +193,13 @@ function FlipCard({ front, back, bg = '#FFFFFF' }) {
 
 export default function Money() {
   const navigate = useNavigate()
-
   return (
     <Page paddingTop={100} bg="#F5F5F4">
       <motion.div variants={stagger.container} initial="hidden" animate="show">
       {/* ─── Header ─── */}
       <motion.div variants={stagger.item} style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: '#0F172A', lineHeight: 1.05 }}>
-          Invest<span style={{ color: '#4F46E5' }}>.</span>
+          Money<span style={{ color: '#6366F1' }}>.</span>
         </h1>
       </motion.div>
 
@@ -220,61 +217,48 @@ export default function Money() {
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Total Wealth
                     </div>
-                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#4F46E5' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
                     </div>
                   </div>
 
                   {/* Hero Content */}
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Net Worth</div>
-                    <h4 style={{ fontSize: 'clamp(40px, 11vw, 48px)', fontWeight: 900, color: '#0F172A', letterSpacing: -2.5, lineHeight: 1, marginBottom: 4 }}>
-                      ₹1.25Cr
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Net Worth</div>
+                    <h4 style={{ fontSize: 'clamp(48px, 14vw, 64px)', fontWeight: 900, color: '#0F172A', letterSpacing: -1.5, lineHeight: 0.9, marginBottom: 12 }}>
+                      ₹1.25<span style={{ opacity: 0.4, fontSize: 36, fontWeight: 700, marginLeft: 4 }}>Cr</span>
                     </h4>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#64748B', marginBottom: 12 }}>
-                      Assets ₹1.40Cr <span style={{ color: '#94A3B8' }}>−</span> Liabilities ₹12.45L
+                    
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, background: 'rgba(255,255,255,0.6)', padding: '6px 12px', borderRadius: 100, color: '#0F172A', width: 'fit-content' }}>
+                      <span style={{ color: '#10B981' }}>+₹16.8L</span> 
+                      <span style={{ opacity: 0.3 }}>|</span>
+                      <span>18% <span style={{ opacity: 0.6 }}>XIRR</span></span>
                     </div>
 
-                    {/* Liquid / Fixed / Liabilities split */}
-                    <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
-                      <div style={{ flex: 1, background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '7px 10px' }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Liquid</div>
-                        <div style={{ fontSize: 18, fontWeight: 900, color: '#4F46E5', letterSpacing: -1 }}>₹75L</div>
-                      </div>
-                      <div style={{ flex: 1, background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '7px 10px' }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>Fixed</div>
-                        <div style={{ fontSize: 18, fontWeight: 900, color: '#E11D48', letterSpacing: -1 }}>₹50L</div>
-                      </div>
-                      <div style={{ flex: 1, background: 'rgba(239,68,68,0.08)', borderRadius: 12, padding: '7px 10px' }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: 0.5 }}>Liabilities</div>
-                        <div style={{ fontSize: 18, fontWeight: 900, color: '#EF4444', letterSpacing: -1 }}>₹12.4L</div>
-                      </div>
-                    </div>
-
-                    {/* Growth chart */}
-                    <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: '8px 12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>12-Month Growth</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981' }}>+₹16.8L • 18% XIRR</span>
-                      </div>
-                      <Sparkline data={netWorthGrowth} width={280} height={56} color="#4F46E5" strokeW={2} />
+                    <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
+                       <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>
+                          <span style={{ color: '#0F172A', fontWeight: 800, display: 'block', marginBottom: 2 }}>Assets</span>₹1.40Cr
+                       </div>
+                       <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>
+                          <span style={{ color: '#EF4444', fontWeight: 800, display: 'block', marginBottom: 2 }}>Debts</span>₹12.45L
+                       </div>
                     </div>
                   </div>
 
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
-                    <div style={{ display: 'inline-flex', marginBottom: 8 }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '8px 12px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A' }}>
+                    <div style={{ display: 'inline-flex', marginBottom: 12 }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A' }}>
                         SIP ₹35k/mo • Invested ₹58.2L
                       </div>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Analyze my full portfolio of ₹75L across equity, debt, and gold. Show me complete breakdown and suggest optimizations." } }) }}
-                      style={{ width: '100%', padding: '18px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'net-worth', title: 'Total Wealth — ₹1.25 Cr', subtitle: '₹75L invested across equity, debt & gold. ₹44L in property equity. XIRR 18.4% with SIP ₹35k/mo. Your wealth grew 22% this year.', color: '#4F46E5', icon: Wallet, benefit: '18.4% XIRR', context: "Analyze my full portfolio of ₹75L across equity, debt, and gold. Show me complete breakdown and suggest optimizations." } } }) }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 11, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 1 }}>Action</span>
-                        <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: -0.5 }}>View Breakdown</span>
+                        <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>View Breakdown</span>
                       </div>
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <ArrowRight size={18} strokeWidth={3} />
@@ -323,7 +307,7 @@ export default function Money() {
                           </div>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexShrink: 0 }}>
                             <span style={{ fontSize: 10, fontWeight: 700, color: '#16A34A' }}>{item.xirr}</span>
-                            <span style={{ whiteSpace: 'nowrap' }}>{item.value} <span style={{ color: '#94A3B8', fontWeight: 500 }}>({item.pct}%)</span></span>
+                            <span style={{ whiteSpace: 'nowrap' }}>{item.value} <span style={{ color: '#64748B', fontWeight: 500 }}>({item.pct}%)</span></span>
                           </div>
                         </div>
                         <Bar value={item.pct} max={100} color={item.color} h={4} delay={i * 0.08} />
@@ -336,7 +320,7 @@ export default function Money() {
                           <div style={{ width: 8, height: 8, borderRadius: 4, background: '#EF4444', flexShrink: 0 }} />
                           <span style={{ color: '#EF4444' }}>Liabilities</span>
                         </div>
-                        <span style={{ color: '#EF4444', whiteSpace: 'nowrap' }}>−₹12.4L <span style={{ color: '#94A3B8', fontWeight: 500 }}>(9%)</span></span>
+                        <span style={{ color: '#EF4444', whiteSpace: 'nowrap' }}>−₹12.4L <span style={{ color: '#64748B', fontWeight: 500 }}>(9%)</span></span>
                       </div>
                       <Bar value={9} max={100} color="#EF4444" h={4} delay={0.7} />
                     </div>
@@ -345,11 +329,11 @@ export default function Money() {
                   <div style={{ paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', gap: 20 }}>
                       <div>
-                        <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>SIP/MO</div>
+                        <div style={{ fontSize: 10, color: '#64748B', fontWeight: 700, letterSpacing: 0.5 }}>SIP/MO</div>
                         <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>₹35k</div>
                       </div>
                       <div>
-                        <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>INVESTED</div>
+                        <div style={{ fontSize: 10, color: '#64748B', fontWeight: 700, letterSpacing: 0.5 }}>INVESTED</div>
                         <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#4F46E5' }}>₹58.2L</div>
                       </div>
                     </div>
@@ -369,15 +353,16 @@ export default function Money() {
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Portfolio Mix
                     </div>
-                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
                     </div>
                   </div>
 
                   {/* Hero Content */}
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Asset Allocation</div>
-                    <h4 style={{ fontSize: 38, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.1 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Asset Allocation</div>
+                    <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                       Equity <span style={{ color: '#4F46E5' }}>65%</span><br/>Debt <span style={{ color: '#0EA5E9' }}>17%</span>
                     </h4>
                     <div style={{ marginTop: 0 }}>
@@ -406,16 +391,15 @@ export default function Money() {
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
                     <div style={{ display: 'inline-flex', marginBottom: 12 }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         ⏳ Long-term 60% • Short needs +₹3L
                       </div>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Analyze my portfolio allocation across 4 buckets — Liquid ₹6L, Short ₹9L, Medium ₹15L, Long ₹45L. Am I balanced?" } }) }}
-                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'portfolio-mix', title: 'Portfolio Mix — 4 Buckets', subtitle: 'Liquid ₹6L (8%), Short ₹9L (12%), Medium ₹15L (20%), Long ₹45L (60%). Short-term bucket needs +₹3L to hit target.', color: '#10B981', icon: PieChart, benefit: '60% Long-Term', context: "Analyze my portfolio allocation across 4 buckets — Liquid ₹6L, Short ₹9L, Medium ₹15L, Long ₹45L. Am I balanced?" } } }) }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                         <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Rebalance</span>
                       </div>
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -474,7 +458,7 @@ export default function Money() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, flex: 1 }}>
                             <div style={{ width: 8, height: 8, borderRadius: 4, background: bucket.color, flexShrink: 0 }} />
                             <span style={{ fontSize: 13, fontWeight: 800, whiteSpace: 'nowrap' }}>{bucket.label}</span>
-                            <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, whiteSpace: 'nowrap' }}>{bucket.horizon}</span>
+                            <span style={{ fontSize: 10, color: '#64748B', fontWeight: 600, whiteSpace: 'nowrap' }}>{bucket.horizon}</span>
                           </div>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexShrink: 0 }}>
                             <span style={{ fontSize: 10, fontWeight: 700, color: bucket.xirr.startsWith('-') ? '#DC2626' : '#16A34A', whiteSpace: 'nowrap' }}>{bucket.xirr}</span>
@@ -513,16 +497,17 @@ export default function Money() {
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Top Gainers
                     </div>
-                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F59E0B' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
                     </div>
                   </div>
 
                   {/* Hero Content */}
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Best Performing Fund</div>
-                    <h4 style={{ fontSize: 38, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.1 }}>
-                      Quant Small Cap<br/><span style={{ color: '#10B981' }}>+64%</span> <span style={{ fontSize: 22, fontWeight: 700, color: '#94A3B8' }}>1Y return</span>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Best Performing Fund</div>
+                    <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
+                      Quant Small Cap<br/><span style={{ color: '#10B981' }}>+64%</span> <span style={{ fontSize: 22, fontWeight: 700, color: '#64748B' }}>1Y return</span>
                     </h4>
                     <div style={{ marginTop: 0 }}>
                       <div style={{ fontSize: 10, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>Top Performers</div>
@@ -558,16 +543,15 @@ export default function Money() {
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
                     <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         +8.2% Alpha vs Nifty
                       </div>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Show me all my fund returns: Quant Small Cap +64%, HDFC MidCap +41%, PPFAS +28%, SGB +14%. Should I book profits in small caps?" } }) }}
-                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'top-gainers', title: 'Fund Performance — +8.2% Alpha', subtitle: 'Quant Small Cap +64%, HDFC MidCap +41%, PPFAS +28%, SGB +14%. Axis Bluechip -3%. Portfolio Sharpe 1.7 vs Nifty 1.2.', color: '#059669', icon: TrendingUp, benefit: '+8.2% vs Nifty', context: "Show me all my fund returns: Quant Small Cap +64%, HDFC MidCap +41%, PPFAS +28%, SGB +14%. Should I book profits in small caps?" } } }) }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                         <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>View All Funds</span>
                       </div>
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -580,9 +564,9 @@ export default function Money() {
               back={
                 <>
                   {/* Back: Simple fund action list */}
-                  <div style={{ marginBottom: 10 }}>
-                    <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: -0.8 }}>What To Do</span>
-                    <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 2 }}>AI verdict on each fund</p>
+                  <div style={{ marginBottom: 16 }}>
+                    <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.8 }}>What To Do</span>
+                    <p style={{ fontSize: 12, color: '#64748B', fontWeight: 600, marginTop: 4 }}>AI verdict on each fund</p>
                   </div>
 
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -600,9 +584,9 @@ export default function Money() {
                           <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A', lineHeight: 1.2 }}>{f.name}</div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
                             <span style={{ fontSize: 16, fontWeight: 900, color: f.ret.startsWith('-') ? '#DC2626' : '#059669' }}>{f.ret}</span>
-                            <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{f.val}</span>
+                            <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>{f.val}</span>
                           </div>
-                          {f.hint && <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 600, marginTop: 2 }}>{f.hint}</div>}
+                          {f.hint && <div style={{ fontSize: 10, color: '#64748B', fontWeight: 600, marginTop: 2 }}>{f.hint}</div>}
                         </div>
                         {/* Right: Action badge */}
                         <div style={{ background: f.tagBg, padding: '5px 10px', borderRadius: 10, fontSize: 11, fontWeight: 800, color: f.tagColor, whiteSpace: 'nowrap', flexShrink: 0 }}>{f.tag}</div>
@@ -627,15 +611,16 @@ export default function Money() {
                     <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                       Life Goals
                     </div>
-                    <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#E11D48' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
                     </div>
                   </div>
 
                   {/* Hero Content */}
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Goal Progress</div>
-                    <h4 style={{ fontSize: 42, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2, lineHeight: 0.95 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Goal Progress</div>
+                    <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                       4 Goals
                     </h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -659,16 +644,15 @@ export default function Money() {
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
                     <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         🏠 House ₹12L away • 2.8 yrs
                       </div>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "Review my 4 life goals: Emergency Fund ₹6L (done), House Down-payment ₹20L (68% at ₹13.6L), Child Education ₹50L (22%), Retirement ₹3Cr (15%). Am I on track?" } }) }}
-                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'life-goals', title: '4 Life Goals — Mixed Progress', subtitle: 'Emergency Fund done, House 68% (₹12L away in 2.8 yrs), Child Education 22%, Retirement 15%. Child SIP needs +₹5k/mo.', color: '#E11D48', icon: Target, benefit: '🏠 ₹12L to House', context: "Review my 4 life goals: Emergency Fund ₹6L (done), House Down-payment ₹20L (68% at ₹13.6L), Child Education ₹50L (22%), Retirement ₹3Cr (15%). Am I on track?" } } }) }}
+                      style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                         <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Plan Goals</span>
                       </div>
                       <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -699,7 +683,7 @@ export default function Money() {
                             <div style={{ width: 8, height: 8, borderRadius: 4, background: goal.color }} />
                             <span style={{ fontSize: 14, fontWeight: 800 }}>{goal.label}</span>
                           </div>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: goal.color }}>{goal.saved}<span style={{ color: '#94A3B8', fontWeight: 500, fontSize: 11 }}> / {goal.target}</span></span>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: goal.color }}>{goal.saved}<span style={{ color: '#64748B', fontWeight: 500, fontSize: 11 }}> / {goal.target}</span></span>
                         </div>
                         <Bar value={goal.pct} max={100} color={goal.color} h={5} delay={i * 0.1} />
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
@@ -723,143 +707,42 @@ export default function Money() {
 
       {/* ─── Action Items (Compact) ─── */}
       <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#EF4444', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Attention Needed
-          </h3>
-        </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-          {actionItems.map((item, i) => (
-            <motion.div
+        <SectionLabel color="#EF4444">Attention Needed</SectionLabel>
+        <ScrollRow gap={12} style={{ paddingBottom: 12 }}>
+          {actionItems.map((item) => (
+            <ActionCard
               key={item.id}
-              whileTap={{ scale: 0.985 }}
+              icon={item.icon}
+              iconColor={item.color}
+              title={item.title}
+              subtitle={item.subtitle}
+              rightLabel={item.benefit}
+              rightColor={item.color}
               onClick={() => navigate('/advisor', { state: { activeItem: item, context: 'money', allItems: actionItems }})}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 16px',
-                borderBottom: i < actionItems.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
-                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>
-                <ChevronRight size={16} color="#94A3B8" />
-              </div>
-            </motion.div>
+            />
           ))}
-        </div>
+        </ScrollRow>
       </motion.div>
 
       {/* ─── Market Intelligence (Compact) ─── */}
       <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Market Intelligence
-          </h3>
-        </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-          {marketInsights.map((item, i) => (
-            <motion.div
+        <SectionLabel color="#4F46E5">Market Intelligence</SectionLabel>
+        <ScrollRow gap={12} style={{ paddingBottom: 12 }}>
+          {marketInsights.map((item) => (
+            <ActionCard
               key={item.id}
-              whileTap={{ scale: 0.985 }}
+              icon={item.icon}
+              iconColor={item.color}
+              title={item.title}
+              subtitle={item.subtitle}
+              rightLabel={item.benefit}
+              rightColor={item.color}
               onClick={() => navigate('/advisor', { state: { activeItem: item, context: 'market', allItems: marketInsights }})}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 16px',
-                borderBottom: i < marketInsights.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
-                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{item.subtitle}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>
-                <ChevronRight size={16} color="#94A3B8" />
-              </div>
-            </motion.div>
+            />
           ))}
-        </div>
+        </ScrollRow>
       </motion.div>
 
-      {/* ─── Account-wise Summary ─── */}
-      <motion.div variants={stagger.item} style={{ marginTop: 32, marginBottom: 120 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            All Accounts
-          </h3>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#64748B' }}>{accounts.reduce((n, g) => n + g.items.length, 0)} accounts</span>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {accounts.map((group, gi) => {
-            const groupTotal = group.items.reduce((s, it) => s + (it.value || 0), 0)
-            const isLiability = group.category.toLowerCase().includes('liabilit') || group.category.toLowerCase().includes('loan')
-            return (
-              <div key={gi} style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-                {/* Category Header */}
-                <div style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '14px 16px',
-                  borderBottom: '1px solid #F1F5F9',
-                  background: isLiability ? 'rgba(239,68,68,0.04)' : 'rgba(0,0,0,0.01)'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 18 }}>{group.icon}</span>
-                    <span style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>{group.category}</span>
-                  </div>
-                  {groupTotal > 0 && (
-                    <span style={{ fontSize: 14, fontWeight: 800, color: isLiability ? '#EF4444' : '#0F172A' }}>
-                      {isLiability ? '−' : ''}₹{groupTotal >= 100000 ? `${(groupTotal / 100000).toFixed(1)}L` : `${(groupTotal / 1000).toFixed(0)}k`}
-                    </span>
-                  )}
-                </div>
-                {/* Items */}
-                {group.items.map((item, ii) => (
-                  <div key={ii} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '13px 16px',
-                    borderBottom: ii < group.items.length - 1 ? '1px solid #F8FAFC' : 'none'
-                  }}>
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
-                      <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{item.detail}</div>
-                    </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 12 }}>
-                      {item.value != null ? (
-                        <>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: isLiability ? '#EF4444' : '#0F172A' }}>
-                            {isLiability ? '−' : ''}₹{item.value >= 100000 ? `${(item.value / 100000).toFixed(1)}L` : `${(item.value / 1000).toFixed(0)}k`}
-                          </div>
-                          {item.ret != null && (
-                            <div style={{ fontSize: 11, fontWeight: 700, color: item.ret >= 0 ? '#10B981' : '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
-                              {item.ret >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />}
-                              {item.ret}%
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <span style={{ fontSize: 12, fontWeight: 700, color: group.color, background: `${group.color}12`, padding: '4px 10px', borderRadius: 100 }}>Active</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )
-          })}
-        </div>
-      </motion.div>
       </motion.div>
     </Page>
   )

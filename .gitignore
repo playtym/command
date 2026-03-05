@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+build_output.txt
+fix_ui.js
+original_money_top.txt

@@ -7,6 +7,7 @@ import Money from './pages/Money'
 import Spend from './pages/Spend'
 import Advisor from './pages/Advisor'
 import Rewards from './pages/Rewards'
+import Notifications from './pages/Notifications'
 
 export default function App() {
   const loc = useLocation()
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/spend" element={<Spend />} />
           <Route path="/advisor" element={<Advisor />} />
           <Route path="/rewards" element={<Rewards />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Routes>
       </AnimatePresence>
       <BottomNav />

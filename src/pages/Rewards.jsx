@@ -5,8 +5,8 @@ import {
   Trophy, Zap, Star, ChevronRight, CheckCircle2, 
   Crown, ArrowRight, User
 } from 'lucide-react'
-import { Page, ScrollRow, stagger } from '../components/UI'
-import { Bar, Sparkline } from '../components/Charts'
+import { Page, ScrollRow, stagger, SectionLabel, ListRow, ActionCard } from '../components/UI'
+import { Bar } from '../components/Charts'
 
 /* ─── Data ─── */
 const milestones = [
@@ -17,24 +17,25 @@ const milestones = [
   { id: 5, name: 'Platinum Status', date: 'Pending', earned: false },
 ]
 
-/* ─── Card infrastructure (matching Money/Spend) ─── */
+/* ─── Flippable Card Wrapper ─── */
 const cardStyle = {
   minWidth: 'calc(100% - 24px)',
-  height: 'clamp(400px, 58vh, 540px)',
   scrollSnapAlign: 'center',
+  height: 'clamp(400px, 58vh, 540px)',
   perspective: 1200,
-  flexShrink: 0,
+  borderRadius: 32,
 }
 
 const faceBase = {
   position: 'absolute',
-  inset: 0,
+  width: '100%',
+  height: '100%',
   backfaceVisibility: 'hidden',
   WebkitBackfaceVisibility: 'hidden',
   borderRadius: 32,
   padding: '24px 22px 22px',
-  border: 'none',
-  boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
+  boxShadow: '0 16px 40px -12px rgba(0,0,0,0.08)',
+  border: '1px solid rgba(255,255,255,0.7)',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
@@ -46,12 +47,14 @@ function FlipCard({ front, back, bg = '#FFFFFF' }) {
     <div style={cardStyle} onClick={() => setFlipped(f => !f)}>
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: 0.6, type: 'spring', stiffness: 260, damping: 20 }}
+        transition={{ duration: 0.7, type: 'spring', stiffness: 200, damping: 24 }}
         style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
       >
+        {/* Front */}
         <div style={{ ...faceBase, background: bg, color: '#0F172A' }}>
           {front}
         </div>
+        {/* Back */}
         <div style={{ ...faceBase, background: bg, color: '#0F172A', transform: 'rotateY(180deg)' }}>
           {back}
         </div>
@@ -59,9 +62,6 @@ function FlipCard({ front, back, bg = '#FFFFFF' }) {
     </div>
   )
 }
-
-/* ─── Points growth sparkline data ─── */
-const pointsGrowth = [200, 380, 520, 650, 800, 980, 1100, 1320, 1500, 1650, 1750, 1850]
 
 export default function Rewards() {
   const navigate = useNavigate()
@@ -91,7 +91,7 @@ export default function Rewards() {
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Gold Status
                   </div>
-                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
                     <Crown size={18} color="#D97706" strokeWidth={2.5} />
                   </div>
                 </div>
@@ -119,8 +119,8 @@ export default function Rewards() {
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
                     <div>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Total Points</div>
-                      <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', letterSpacing: -2.5, lineHeight: 1 }}>1,850</h4>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Total Points</div>
+                      <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', letterSpacing: -1.5, lineHeight: 1 }}>1,850</h4>
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 700, color: '#D97706' }}>150 to Platinum</span>
                   </div>
@@ -134,29 +134,20 @@ export default function Rewards() {
                     <Bar value={92} max={100} color="#D97706" h={8} />
                   </div>
 
-                  {/* Points sparkline */}
-                  <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: 14, padding: '6px 12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 }}>12 mo</span>
-                      <span style={{ fontSize: 11, fontWeight: 800, color: '#D97706' }}>+1,650 pts</span>
-                    </div>
-                    <Sparkline data={pointsGrowth} width={280} height={40} color="#D97706" strokeW={2} />
-                  </div>
                 </div>
 
                 {/* Callout + CTA */}
                 <div style={{ marginTop: 'auto' }}>
                   <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       🏆 3 milestones earned
                     </div>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I'm a Gold member with 1,850 points, 150 away from Platinum. What's the fastest way to reach Platinum and what benefits do I unlock?" } }) }}
-                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'gold-status', title: 'Gold — 1,850 Points', subtitle: '150 to Platinum (92%). 3 milestones earned. Platinum unlocks 2% cashback, lounge access, ₹5k voucher & fee waiver.', color: '#D97706', icon: Crown, benefit: '150 to Platinum', context: "I'm a Gold member with 1,850 points, 150 away from Platinum. What's the fastest way to reach Platinum and what benefits do I unlock?" } } }) }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                       <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>View Card</span>
                     </div>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -212,15 +203,16 @@ export default function Rewards() {
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Challenges
                   </div>
-                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#4F46E5' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    </div>
                   </div>
-                </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Active Quests</div>
-                  <h4 style={{ fontSize: 42, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2, lineHeight: 0.95 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Active Quests</div>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                     3 Active
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -234,7 +226,7 @@ export default function Rewards() {
                           <span>{c.label}</span>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                             <span style={{ fontSize: 10, fontWeight: 700, color: c.color }}>{c.pts}</span>
-                            <span style={{ color: '#94A3B8', fontWeight: 600 }}>{c.status}</span>
+                            <span style={{ color: '#64748B', fontWeight: 600 }}>{c.status}</span>
                           </div>
                         </div>
                         <Bar value={c.progress} max={100} color={c.color} h={6} delay={i * 0.1} />
@@ -246,16 +238,15 @@ export default function Rewards() {
                 {/* Callout + CTA */}
                 <div style={{ marginTop: 'auto' }}>
                   <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       ⚡ 700 pts available
                     </div>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have 3 active challenges: No Spend Week (5/7 done), Credit Builder (pay early), and SIP Streak (6/12 months). Help me complete them all for 700 bonus points." } }) }}
-                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'challenges', title: '3 Challenges — 700 Points', subtitle: 'No Spend Week 5/7, Credit Builder (pay early), SIP Streak 6/12 mo. Complete all for instant Platinum upgrade.', color: '#4F46E5', icon: Zap, benefit: '⚡ 700 pts', context: "I have 3 active challenges: No Spend Week (5/7 done), Credit Builder (pay early), and SIP Streak (6/12 months). Help me complete them all for 700 bonus points." } } }) }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                       <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Complete All</span>
                     </div>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -311,15 +302,16 @@ export default function Rewards() {
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Rewards Earned
                   </div>
-                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    </div>
                   </div>
-                </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Cashback & Perks This Year</div>
-                  <h4 style={{ fontSize: 42, fontWeight: 900, color: '#0F172A', marginBottom: 4, letterSpacing: -2, lineHeight: 0.95 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Cashback & Perks This Year</div>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                     ₹8,240
                   </h4>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#10B981', marginBottom: 16 }}>
@@ -347,16 +339,15 @@ export default function Rewards() {
                 {/* Callout + CTA */}
                 <div style={{ marginTop: 'auto' }}>
                   <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       💰 ₹4.2k more possible this year
                     </div>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I've earned ₹8,240 in cashback & perks this year. How can I maximize my rewards across my 3 credit cards and available offers?" } }) }}
-                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'rewards-earned', title: 'Rewards — ₹8,240 Earned', subtitle: 'Cashback ₹4,120, offers ₹2,300, points ₹1,200, fee waivers ₹620. ₹4.2k more possible this year.', color: '#10B981', icon: Trophy, benefit: '+₹4.2k Possible', context: "I've earned ₹8,240 in cashback & perks this year. How can I maximize my rewards across my 3 credit cards and available offers?" } } }) }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                       <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Maximize</span>
                     </div>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -389,7 +380,7 @@ export default function Rewards() {
                         <span style={{ fontSize: 12, fontWeight: 800, color: '#10B981' }}>{c.potential}</span>
                       </div>
                       <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, marginTop: 2 }}>{c.tip}</div>
-                      <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, marginTop: 2 }}>{c.current}</div>
+                      <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, marginTop: 2 }}>{c.current}</div>
                     </div>
                   ))}
                 </div>
@@ -406,74 +397,43 @@ export default function Rewards() {
 
       {/* ─── Milestones (Compact List) ─── */}
       <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Milestones
-          </h3>
-        </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
+        <SectionLabel>Milestones</SectionLabel>
+        <ScrollRow gap={12} style={{ paddingBottom: 12 }}>
           {milestones.map((m, i) => (
-            <div key={m.id} style={{ 
-              display: 'flex', alignItems: 'center', gap: 14,
-              padding: '16px 16px',
-              borderBottom: i < milestones.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
-              opacity: m.earned ? 1 : 0.5
-            }}>
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: m.earned ? '#ECFDF5' : '#F5F5F4', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {m.earned 
-                  ? <CheckCircle2 size={18} color="#10B981" strokeWidth={2.5} />
-                  : <Trophy size={18} color="#94A3B8" strokeWidth={2.5} />
-                }
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{m.name}</div>
-                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>{m.date}</div>
-              </div>
-              {m.earned && (
-                <span style={{ fontSize: 11, fontWeight: 800, color: '#10B981' }}>Unlocked</span>
-              )}
+            <div key={m.id} style={{ opacity: m.earned ? 1 : 0.5 }}>
+              <ActionCard
+                icon={m.earned ? CheckCircle2 : Trophy}
+                iconColor={m.earned ? '#10B981' : '#64748B'}
+                title={m.name}
+                subtitle={m.date}
+                rightLabel={m.earned ? 'Unlocked' : undefined}
+                rightColor="#10B981"
+              />
             </div>
           ))}
-        </div>
+        </ScrollRow>
       </motion.div>
 
       {/* ─── Quick Actions ─── */}
-      <motion.div variants={stagger.item} style={{ marginTop: 28, marginBottom: 120 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Earn More Points
-          </h3>
-        </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
+      <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
+        <SectionLabel>Earn More Points</SectionLabel>
+        <ScrollRow gap={12} style={{ paddingBottom: 12 }}>
           {[
-            { label: 'Refer a friend', pts: '+300 pts', color: '#4F46E5', query: "How does the referral program work? I want to refer a friend and earn 300 points." },
-            { label: 'Complete KYC update', pts: '+100 pts', color: '#10B981', query: "I need to update my KYC. Walk me through the process and confirm the 100 points reward." },
-            { label: 'Link bank account', pts: '+150 pts', color: '#F59E0B', query: "I want to link my bank account for auto-tracking. What do I earn and how safe is it?" },
+            { label: 'Refer a friend', pts: '+300 pts', color: '#4F46E5', subtitle: 'Earn 300 points', query: "How does the referral program work? I want to refer a friend and earn 300 points." },
+            { label: 'Complete KYC update', pts: '+100 pts', color: '#10B981', subtitle: 'One-time bonus', query: "I need to update my KYC. Walk me through the process and confirm the 100 points reward." },
+            { label: 'Link bank account', pts: '+150 pts', color: '#F59E0B', subtitle: 'Auto-tracking enabled', query: "I want to link my bank account for auto-tracking. What do I earn and how safe is it?" },
           ].map((action, i) => (
-            <motion.div
+            <ActionCard
               key={i}
-              whileTap={{ scale: 0.985 }}
+              iconColor={action.color}
+              title={action.label}
+              subtitle={action.subtitle}
+              rightLabel={action.pts}
+              rightColor={action.color}
               onClick={() => navigate('/advisor', { state: { initialQuery: action.query } })}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 16px',
-                borderBottom: i < 2 ? '1px solid rgba(0,0,0,0.04)' : 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${action.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: action.color }} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>{action.label}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: action.color }}>{action.pts}</span>
-                <ChevronRight size={16} color="#94A3B8" />
-              </div>
-            </motion.div>
+            />
           ))}
-        </div>
+        </ScrollRow>
       </motion.div>
 
       </motion.div>

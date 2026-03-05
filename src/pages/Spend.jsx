@@ -6,7 +6,7 @@ import {
   Sparkles, AlertCircle, Calendar, ArrowUpRight,
   School, Plane, Hotel, ArrowRight
 } from 'lucide-react'
-import { Page, ScrollRow, stagger } from '../components/UI'
+import { Page, ScrollRow, stagger, SectionLabel, ListRow, ActionCard } from '../components/UI'
 import { GaugeArc, Bar, SegmentBar, Donut } from '../components/Charts'
 
 const upcomingExpenses = [
@@ -59,6 +59,13 @@ const spendInsights = [
   },
 ]
 
+const subscriptions = [
+  { id: 'netflix', name: 'Netflix Premium', amount: '₹649/mo', nextDate: 'Mar 15', icon: '🍿', color: '#E50914', via: 'UPI Autopay' },
+  { id: 'spotify', name: 'Spotify Standard', amount: '₹119/mo', nextDate: 'Mar 21', icon: '🎧', color: '#1DB954', via: 'HDFC Regalia' },
+  { id: 'chatgpt', name: 'ChatGPT Plus', amount: '₹1,950/mo', nextDate: 'Mar 12', icon: '🤖', color: '#10A37F', via: 'Apple Pay' },
+  { id: 'swiggy', name: 'Swiggy One', amount: '₹299/3mo', nextDate: 'Apr 05', icon: '🍔', color: '#F97316', via: 'UPI Autopay' },
+]
+
 const creditCards = [
   { id: 1, name: 'HDFC Regalia', last4: '4242', limit: 120000, used: 45000, color: '#3B82F6', network: 'VISA',
     topSpend: 'Travel', optimal: true, status: 'Great for Lounge',
@@ -96,7 +103,7 @@ const recentTrans = [
   { id: 5, name: 'Salary', cat: 'Income', amount: 85000, time: '01 Feb', icon: '💰' },
 ]
 
-/* ─── Flippable Card Wrapper (matches Money/Action) ─── */
+/* ─── Flippable Card Wrapper ─── */
 const cardStyle = {
   minWidth: 'calc(100% - 24px)',
   scrollSnapAlign: 'center',
@@ -113,8 +120,8 @@ const faceBase = {
   WebkitBackfaceVisibility: 'hidden',
   borderRadius: 32,
   padding: '24px 22px 22px',
-  border: 'none',
-  boxShadow: '0 8px 40px -12px rgba(0,0,0,0.10)',
+  boxShadow: '0 16px 40px -12px rgba(0,0,0,0.08)',
+  border: '1px solid rgba(255,255,255,0.7)',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
@@ -126,12 +133,14 @@ function FlipCard({ front, back, bg = '#FFFFFF' }) {
     <div style={cardStyle} onClick={() => setFlipped(f => !f)}>
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: 0.6, type: 'spring', stiffness: 260, damping: 20 }}
+        transition={{ duration: 0.7, type: 'spring', stiffness: 200, damping: 24 }}
         style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
       >
+        {/* Front */}
         <div style={{ ...faceBase, background: bg, color: '#0F172A' }}>
           {front}
         </div>
+        {/* Back */}
         <div style={{ ...faceBase, background: bg, color: '#0F172A', transform: 'rotateY(180deg)' }}>
           {back}
         </div>
@@ -168,17 +177,18 @@ export default function Spend() {
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     February Outflow
                   </div>
-                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F97316' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    </div>
                   </div>
-                </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                     ₹27.4k Spent
                   </h4>
-                  <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
+                  <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.5, fontWeight: 400, letterSpacing: -0.4, maxWidth: '95%' }}>
                     61% of your ₹45k monthly budget used. Travel was the biggest category.
                   </p>
                   <div style={{ marginTop: 16 }}>
@@ -195,16 +205,15 @@ export default function Spend() {
                   {/* Callout + CTA pinned to bottom */}
                   <div style={{ marginTop: 'auto' }}>
                     <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         ₹17.6k Remaining
                       </div>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I've spent ₹27.4k this month out of my ₹45k budget. Travel is my biggest category at ₹9.6k. Help me stay on track for the rest of the month." } }) }}
-                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                      onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'feb-outflow', title: 'February — ₹27.4k Spent', subtitle: '61% of ₹45k budget used. Travel ₹9.6k biggest category. ₹17.6k remaining, 26 days left. Safe spend: ₹677/day.', color: '#F97316', icon: ShoppingBag, benefit: '₹17.6k Left', context: "I've spent ₹27.4k this month out of my ₹45k budget. Travel is my biggest category at ₹9.6k. Help me stay on track for the rest of the month." } } }) }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                       <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Track Spending</span>
                     </div>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -252,15 +261,15 @@ export default function Spend() {
                 {/* Bottom stats */}
                 <div style={{ paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 20 }}>
                   <div>
-                    <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>SAFE/DAY</div>
+                    <div style={{ fontSize: 10, color: '#64748B', fontWeight: 700, letterSpacing: 0.5 }}>SAFE/DAY</div>
                     <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#10B981' }}>₹677</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>PROJECTION</div>
+                    <div style={{ fontSize: 10, color: '#64748B', fontWeight: 700, letterSpacing: 0.5 }}>PROJECTION</div>
                     <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#10B981' }}>₹35k</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, letterSpacing: 0.5 }}>VS LAST MO</div>
+                    <div style={{ fontSize: 10, color: '#64748B', fontWeight: 700, letterSpacing: 0.5 }}>VS LAST MO</div>
                     <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2, color: '#10B981' }}>-12%</div>
                   </div>
                 </div>
@@ -278,14 +287,15 @@ export default function Spend() {
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Credit Cards
                   </div>
-                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#6366F1' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    </div>
                   </div>
-                </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2.8, lineHeight: 0.92 }}>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                     ₹81.9k Used
                   </h4>
                   <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.5, fontWeight: 600, letterSpacing: -0.4, maxWidth: '95%' }}>
@@ -313,16 +323,15 @@ export default function Spend() {
                 {/* Callout + CTA pinned to bottom */}
                 <div style={{ marginTop: 'auto' }}>
                   <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       20% Used • All Healthy
                     </div>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have 3 credit cards — HDFC Regalia (₹45k used), ICICI Amazon (₹12.1k used), Gold Member (₹24.75k used). Help me optimize which card to use for what." } }) }}
-                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'credit-cards', title: '3 Cards — ₹81.9k Used', subtitle: 'Regalia ₹45k (38%), Amazon ₹12.1k (15%), Gold ₹24.75k (12%). 20% utilization. Switch dining to Regalia for 4x points.', color: '#4F46E5', icon: CreditCard, benefit: '20% Utilization', context: "I have 3 credit cards — HDFC Regalia (₹45k used), ICICI Amazon (₹12.1k used), Gold Member (₹24.75k used). Help me optimize which card to use for what." } } }) }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                       <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Optimize Cards</span>
                     </div>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -392,15 +401,16 @@ export default function Spend() {
                   <div style={{ fontSize: 12, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: 1.5, background: 'rgba(255,255,255,0.5)', padding: '10px 18px', borderRadius: 100 }}>
                     Upcoming Expenses
                   </div>
-                  <div style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }} />
+                    <div style={{ fontSize: 10, fontWeight: 800, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, display: 'flex', alignItems: 'center', gap: 4, opacity: 0.6, marginTop: 10 }}>
+                      <span>Flip</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    </div>
                   </div>
-                </div>
 
                 {/* Hero Content */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Next 90 Days</div>
-                  <h4 style={{ fontSize: 42, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -2, lineHeight: 0.95 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Next 90 Days</div>
+                  <h4 style={{ fontSize: 44, fontWeight: 900, color: '#0F172A', marginBottom: 16, letterSpacing: -1.5, lineHeight: 1.0 }}>
                     ₹2.8L Due
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -412,7 +422,7 @@ export default function Spend() {
                     ].map((e, i) => (
                       <div key={i}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, marginBottom: 3, color: '#0F172A' }}>
-                          <span>{e.label} <span style={{ color: '#94A3B8', fontWeight: 600 }}>• {e.when}</span></span>
+                          <span>{e.label} <span style={{ color: '#64748B', fontWeight: 600 }}>• {e.when}</span></span>
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                             <span style={{ fontSize: 10, fontWeight: 700, color: e.pct >= 100 ? '#10B981' : e.pct > 0 ? '#F59E0B' : '#EF4444' }}>{e.status}</span>
                             <span>{e.amount}</span>
@@ -427,16 +437,15 @@ export default function Spend() {
                 {/* Callout + CTA pinned to bottom */}
                 <div style={{ marginTop: 'auto' }}>
                   <div style={{ display: 'inline-flex', marginBottom: 12, maxWidth: '100%' }}>
-                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: '3px 3px 0px #0F172A', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ background: '#FEF08A', border: '2px solid #0F172A', borderRadius: 14, padding: '9px 14px', fontSize: 13, fontWeight: 800, color: '#0F172A', boxShadow: 'none', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       ⚠️ 2 expenses need funding
                     </div>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { initialQuery: "I have ₹2.8L in expenses coming up over 90 days: School fee ₹42k (funded), Insurance ₹28k (₹11k short), Summer trip ₹1.2L (budgeted), Car service ₹15k (not planned). Help me plan." } }) }}
-                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: '0 12px 24px -8px rgba(15, 23, 42, 0.25)' }}
+                    onClick={(e) => { e.stopPropagation(); navigate('/advisor', { state: { activeItem: { id: 'upcoming-expenses', title: '₹2.8L Due — Next 90 Days', subtitle: 'School ₹42k (funded), Insurance ₹28k (₹11k short), Trip ₹1.2L (budgeted), Car ₹15k (unplanned). 2 need funding now.', color: '#10B981', icon: Calendar, benefit: '⚠️ 2 Unfunded', context: "I have ₹2.8L in expenses coming up over 90 days: School fee ₹42k (funded), Insurance ₹28k (₹11k short), Summer trip ₹1.2L (budgeted), Car service ₹15k (not planned). Help me plan." } } }) }}
+                    style={{ width: '100%', padding: '16px 20px', borderRadius: 28, background: '#0F172A', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', cursor: 'pointer', boxShadow: 'none' }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, textTransform: 'uppercase', opacity: 0.7, letterSpacing: 1, marginBottom: 2 }}>Action</span>
                       <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.5 }}>Plan Ahead</span>
                     </div>
                     <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'white', color: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -466,7 +475,7 @@ export default function Spend() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div style={{ width: 8, height: 8, borderRadius: 4, background: exp.color }} />
                           <span style={{ fontSize: 14, fontWeight: 800 }}>{exp.label}</span>
-                          <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{exp.when}</span>
+                          <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>{exp.when}</span>
                         </div>
                         <span style={{ fontSize: 14, fontWeight: 800, color: exp.color }}>{exp.amount}</span>
                       </div>
@@ -491,71 +500,55 @@ export default function Spend() {
 
       {/* ─── Spend Insights (Compact) ─── */}
       <motion.div variants={stagger.item} style={{ marginTop: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Spending Analysis
-          </h3>
-        </div>
-        <div style={{ background: '#FFFFFF', borderRadius: 20, overflow: 'hidden', border: 'none', boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-          {spendInsights.map((item, i) => (
-            <motion.div
+        <SectionLabel>Spending Analysis</SectionLabel>
+        <ScrollRow gap={12} style={{ paddingBottom: 12 }}>
+          {spendInsights.map((item) => (
+            <ActionCard
               key={item.id}
-              whileTap={{ scale: 0.985 }}
+              icon={item.icon}
+              iconColor={item.color}
+              title={item.title}
+              subtitle={item.subtitle}
+              rightLabel={item.benefit}
+              rightColor={item.color}
               onClick={() => navigate('/advisor', { state: { initialQuery: item.context }})}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 16px',
-                borderBottom: i < spendInsights.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: `${item.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color }} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 2 }}>{item.title}</div>
-                <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.subtitle}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: item.color, background: `${item.color}15`, padding: '5px 10px', borderRadius: 100, whiteSpace: 'nowrap' }}>{item.benefit}</span>
-                <ChevronRight size={16} color="#94A3B8" />
-              </div>
-            </motion.div>
+            />
           ))}
-        </div>
+        </ScrollRow>
       </motion.div>
 
-      {/* ─── Transaction List ─── */}
-      <motion.div variants={stagger.item} style={{ marginTop: 32, marginBottom: 120 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#94A3B8', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-            Recent Transactions
-          </h3>
-        </div>
-
-        <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 8, boxShadow: '0 1px 8px rgba(0,0,0,0.04)', border: 'none' }}>
-          {recentTrans.map((t, i) => (
-            <div key={t.id} style={{ 
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
-              padding: '16px 12px',
-              borderBottom: i < recentTrans.length - 1 ? '1px solid rgba(0,0,0,0.04)' : 'none'
+      {/* ─── Subscriptions & UPI Autopay — compact block ─── */}
+      <motion.div variants={stagger.item} style={{ marginTop: 32 }}>
+        <SectionLabel right="4 Active">UPI Autopay & Subscriptions</SectionLabel>
+        
+        <div style={{ 
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
+        }}>
+          {subscriptions.map((sub) => (
+            <div key={sub.id} style={{ 
+              background: '#fff', borderRadius: 16, padding: '14px',
+              border: '1px solid rgba(0,0,0,0.06)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              display: 'flex', flexDirection: 'column', gap: 8,
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ 
-                  width: 40, height: 40, borderRadius: 12, 
-                  background: 'rgba(0,0,0,0.03)', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 16
-                }}>
-                  {t.icon}
-                </div>
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>{t.name}</div>
-                  <div style={{ fontSize: 12, color: '#94A3B8' }}>{t.time} • {t.cat}</div>
-                </div>
+              {/* Icon + Name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 20, lineHeight: 1 }}>{sub.icon}</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: '#0F172A', lineHeight: 1.2 }}>{sub.name}</span>
               </div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: t.amount < 0 ? '#0F172A' : '#10B981' }}>
-                {t.amount < 0 ? '-' : '+'}₹{Math.abs(t.amount).toLocaleString()}
+              {/* Amount & via */}
+              <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600, lineHeight: 1.3 }}>
+                {sub.amount} • {sub.via}
+              </div>
+              {/* Next date + Cancel */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>{sub.nextDate}</span>
+                <button 
+                  onClick={() => navigate('/advisor', { state: { initialQuery: `I want to cancel my ${sub.name} subscription. Can you handle the cancellation and stop the ${sub.via}?` }})}
+                  style={{ fontSize: 10, fontWeight: 800, color: '#EF4444', background: '#FEF2F2', padding: '4px 10px', borderRadius: 100, border: '1px solid #FCA5A5', cursor: 'pointer', boxShadow: 'none' }}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           ))}

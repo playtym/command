@@ -119,7 +119,7 @@ export default function Dashboard() {
           background: '#FFFFFF', // New Clean White  
           borderRadius: 40,
           border: '1px solid rgba(0,0,0,0.08)',
-          boxShadow: '0 32px 64px -16px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.02)',
+          boxShadow: 'none',
           position: 'relative',
           overflow: 'hidden'
         }}>
@@ -154,7 +154,7 @@ export default function Dashboard() {
               borderRadius: 100,
               fontSize: 14, fontWeight: 800,
               display: 'flex', alignItems: 'center', gap: 6,
-              boxShadow: '0 4px 12px rgba(6, 78, 59, 0.05)'
+              boxShadow: 'none'
             }}>
               <TrendingUp size={16} strokeWidth={3} />
               {todayChangePercent}%
@@ -162,7 +162,7 @@ export default function Dashboard() {
           </div>
 
           <div>
-             <h2 style={{ fontSize: 'clamp(48px, 14vw, 64px)', fontWeight: 900, letterSpacing: -3.5, marginBottom: 4, lineHeight: 0.9, color: '#0F172A' }}>
+             <h2 style={{ fontSize: 'clamp(48px, 14vw, 64px)', fontWeight: 900, letterSpacing: -1.5, marginBottom: 4, lineHeight: 0.9, color: '#0F172A' }}>
                 ₹75.0<span style={{ opacity: 0.4, fontSize: 36, fontWeight: 700, marginLeft: 4 }}>L</span>
              </h2>
              <p style={{ fontSize: 16, fontWeight: 600, color: '#64748B', marginTop: 12 }}>+₹12.4k today</p>
@@ -201,8 +201,8 @@ export default function Dashboard() {
                 background: '#FFFFFF',
                 borderRadius: 28,
                 display: 'flex', alignItems: 'center', gap: 14,
-                boxShadow: '0 24px 48px -12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
-                border: 'none',
+                boxShadow: 'none',
+                border: '1px solid rgba(0,0,0,0.08)',
                 position: 'relative',
                 overflow: 'hidden'
               }}
@@ -221,7 +221,7 @@ export default function Dashboard() {
                 color: item.color,
                 zIndex: 1,
                 flexShrink: 0,
-                boxShadow: `0 8px 16px -4px ${item.bgColor}40`
+                boxShadow: 'none'
               }}>
                 <item.icon size={22} strokeWidth={2.5} />
               </div>
@@ -265,8 +265,8 @@ export default function Dashboard() {
                 background: action.color === '#FFFFFF' ? '#1E293B' : '#FFFFFF',
                 borderRadius: 40,
                 padding: 'clamp(20px, 5vw, 32px)',
-                border: 'none',
-                boxShadow: '0 24px 48px -12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.03)',
+                border: '1px solid rgba(0,0,0,0.08)',
+                boxShadow: 'none',
                 position: 'relative',
                 overflow: 'hidden',
                 color: action.color === '#FFFFFF' ? 'white' : '#0F172A'
@@ -308,7 +308,7 @@ export default function Dashboard() {
                   background: action.color === '#FFFFFF' ? 'white' : '#0F172A', 
                   color: action.color === '#FFFFFF' ? '#0F172A' : 'white',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 8px 16px -4px rgba(0,0,0,0.1)'
+                  boxShadow: 'none'
                 }}>
                   <ArrowUpRight size={22} strokeWidth={3} />
                 </div>
@@ -323,7 +323,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        style={{ marginTop: 32, marginBottom: 120 }}
+        style={{ marginTop: 32 }}
       >
          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h3 style={{ fontSize: 11, fontWeight: 800, color: '#78716C', letterSpacing: 1.5, textTransform: 'uppercase' }}>
@@ -332,7 +332,7 @@ export default function Dashboard() {
           <span style={{ fontSize: 12, fontWeight: 800, color: '#EA580C' }}>See all</span>
         </div>
         
-        <div style={{ background: 'white', borderRadius: 28, padding: 8, boxShadow: '0 4px 20px -4px rgba(0,0,0,0.06)', border: 'none' }}>
+        <div style={{ background: 'white', borderRadius: 28, padding: 8, boxShadow: 'none', border: '1px solid rgba(0,0,0,0.08)' }}>
           {recentTrans.map((t, i) => (
             <div key={t.id} style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', 

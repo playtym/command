@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ChevronRight, TrendingUp, Flame, Utensils, CreditCard, Clapperboard, FileText, ArrowRight, X, Check, MessageCircle, AlertTriangle, Zap } from 'lucide-react'
-import { Page, Dot, SH, Card, WhiteCard, Num, AnimNum, stagger, ScrollRow } from '../components/UI'
+import { ChevronRight, TrendingUp, Flame, Utensils, CreditCard, Clapperboard, FileText, ArrowRight, X, Check, MessageCircle, AlertTriangle, Zap, Bell, Shield, Wallet, TrendingDown, Gift, Clock, CircleDot } from 'lucide-react'
+import { Page, Dot, SH, Card, WhiteCard, Num, AnimNum, stagger, ScrollRow, SectionLabel, ListRow } from '../components/UI'
 
 /* ─── Data ─── */
 const totalMoneySaved = 83553
@@ -306,6 +306,210 @@ const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Go
 
 const lastSync = '2 hours ago'
 
+/* ─── Notifications Data ─── */
+const notifications = [
+  {
+    id: 'n1',
+    group: 'urgent',
+    icon: AlertTriangle,
+    iconColor: '#EF4444',
+    title: 'Health insurance gap detected',
+    subtitle: 'Your ₹5L cover is inadequate for Mumbai ICU costs. Top-up available for ₹267/mo.',
+    time: '2h ago',
+    rightLabel: 'Critical',
+    rightColor: '#EF4444',
+  },
+  {
+    id: 'n2',
+    group: 'urgent',
+    icon: TrendingDown,
+    iconColor: '#D97706',
+    title: 'Portfolio risk is elevated',
+    subtitle: 'Equity at 77% vs 60% target. Consider rebalancing ₹1.2L to debt.',
+    time: '4h ago',
+    rightLabel: 'High',
+    rightColor: '#D97706',
+  },
+  {
+    id: 'n3',
+    group: 'money',
+    icon: Wallet,
+    iconColor: '#059669',
+    title: 'Idle cash earning only 3%',
+    subtitle: 'Move ₹1.3L from HDFC Savings to Liquid Fund for 7.2% returns.',
+    time: '6h ago',
+    rightLabel: '+₹4.9k/yr',
+    rightColor: '#059669',
+  },
+  {
+    id: 'n4',
+    group: 'money',
+    icon: Shield,
+    iconColor: '#4338CA',
+    title: 'Tax saving opportunity',
+    subtitle: 'Invest ₹50K in NPS under 80CCD(1B) to claim ₹15.6K refund.',
+    time: '1d ago',
+    rightLabel: '₹15.6k',
+    rightColor: '#4338CA',
+  },
+  {
+    id: 'n5',
+    group: 'spend',
+    icon: Utensils,
+    iconColor: '#B45309',
+    title: 'Food delivery spending up 23%',
+    subtitle: '₹8.4K this month vs ₹6.8K last month. Set a weekly cap?',
+    time: '1d ago',
+    rightLabel: '↑ 23%',
+    rightColor: '#B45309',
+  },
+  {
+    id: 'n6',
+    group: 'spend',
+    icon: CreditCard,
+    iconColor: '#0F172A',
+    title: 'Credit card bill due in 3 days',
+    subtitle: 'HDFC Infinia — ₹47,832 outstanding. Auto-pay is set.',
+    time: '1d ago',
+    rightLabel: '3 days',
+    rightColor: '#64748B',
+  },
+  {
+    id: 'n7',
+    group: 'rewards',
+    icon: Gift,
+    iconColor: '#7C3AED',
+    title: 'You earned 240 points this week',
+    subtitle: 'Complete 2 more actions to unlock the Gold milestone bonus.',
+    time: '2d ago',
+    rightLabel: '+240 pts',
+    rightColor: '#7C3AED',
+  },
+  {
+    id: 'n8',
+    group: 'rewards',
+    icon: Flame,
+    iconColor: '#059669',
+    title: '18-day streak! Keep it alive',
+    subtitle: 'Check in tomorrow to maintain your streak and earn bonus points.',
+    time: '2d ago',
+    rightLabel: 'Day 18',
+    rightColor: '#059669',
+  },
+]
+
+const notifGroups = [
+  { key: 'urgent', label: 'Needs Attention', color: '#EF4444' },
+  { key: 'money', label: 'Money Moves', color: '#059669' },
+  { key: 'spend', label: 'Spend Alerts', color: '#B45309' },
+  { key: 'rewards', label: 'Rewards & Streaks', color: '#7C3AED' },
+]
+
+/* ─── Notification Panel ─── */
+function NotificationPanel({ open, onClose }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200,
+              background: 'rgba(0,0,0,0.4)',
+              backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+            }}
+          />
+          {/* Sheet */}
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 340, damping: 30 }}
+            style={{
+              position: 'fixed',
+              bottom: 0, left: '50%', transform: 'translateX(-50%)',
+              width: '100%', maxWidth: 430,
+              height: '85vh',
+              zIndex: 201,
+              background: '#F5F5F4',
+              borderRadius: '24px 24px 0 0',
+              display: 'flex', flexDirection: 'column',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Handle + Header */}
+            <div style={{ padding: '12px 20px 0', flexShrink: 0 }}>
+              <div style={{ width: 36, height: 4, background: '#CBD5E1', borderRadius: 2, margin: '0 auto 16px' }} />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div>
+                  <h2 style={{ fontSize: 28, fontWeight: 900, letterSpacing: -1.2, color: '#0F172A', lineHeight: 1.1 }}>
+                    Notifications<span style={{ color: '#6366F1' }}>.</span>
+                  </h2>
+                  <p style={{ fontSize: 13, color: '#64748B', fontWeight: 500, marginTop: 4 }}>
+                    {notifications.length} updates
+                  </p>
+                </div>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={onClose}
+                  style={{
+                    width: 40, height: 40, borderRadius: 12,
+                    background: '#fff', border: '1px solid rgba(0,0,0,0.06)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                  }}
+                >
+                  <X size={18} color="#0F172A" strokeWidth={2.5} />
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Scrollable notification list */}
+            <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '0 20px 100px', WebkitOverflowScrolling: 'touch' }}>
+              {notifGroups.map((group, gi) => {
+                const items = notifications.filter(n => n.group === group.key)
+                if (!items.length) return null
+                return (
+                  <div key={group.key} style={{ marginBottom: 24 }}>
+                    <SectionLabel color={group.color}>{group.label}</SectionLabel>
+                    <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.04)' }}>
+                      {items.map((n, i) => (
+                        <div key={n.id} style={{ position: 'relative' }}>
+                          <ListRow
+                            icon={n.icon}
+                            iconColor={n.iconColor}
+                            title={n.title}
+                            subtitle={n.subtitle}
+                            rightLabel={n.rightLabel}
+                            rightColor={n.rightColor}
+                            last={i === items.length - 1}
+                          />
+                          {/* Time ago label - anchored bottom-right of the row */}
+                          <span style={{
+                            position: 'absolute', bottom: 10, right: 16,
+                            fontSize: 10, fontWeight: 500, color: '#64748B',
+                          }}>
+                            {n.time}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  )
+}
+
 /* ─── Hinge-style Swipe Card ─── */
 function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
   const [isFlipped, setIsFlipped] = useState(false)
@@ -416,7 +620,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
             background: action.bg || '#FFFFFF', 
             borderRadius: 32,      
             padding: '24px 22px 22px',
-            border: 'none',
+            border: '1px solid rgba(0,0,0,0.08)',
             boxShadow: isTop 
               ? '0 8px 40px -12px rgba(0,0,0,0.10)'
               : '0 4px 16px -4px rgba(0,0,0,0.06)',
@@ -517,7 +721,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
             background: '#FFFFFF', 
             borderRadius: 32,      
             padding: '22px',
-            border: 'none',
+            border: '1px solid rgba(0,0,0,0.08)',
             boxShadow: isTop 
               ? '0 8px 40px -12px rgba(0,0,0,0.10)'
               : '0 4px 16px -4px rgba(0,0,0,0.06)',
@@ -634,10 +838,7 @@ function SwipeCard({ action, stackIndex, isTop, onSwipe }) {
 
 export default function Action() {
   const navigate = useNavigate()
-  const [introSeen] = useState(() => {
-    try { return localStorage.getItem('command_intro_seen') === '1' } catch { return false }
-  })
-  const [introStep, setIntroStep] = useState(introSeen ? 2 : 0)
+  const [showNotifs, setShowNotifs] = useState(false)
   const [showCheckin, setShowCheckin] = useState(() => {
     try {
       const last = localStorage.getItem('command_checkin_date')
@@ -651,24 +852,12 @@ export default function Action() {
   })
 
   useEffect(() => {
-    if (introStep === 0) {
-      const timer = setTimeout(() => setIntroStep(1), 2800)
-      return () => clearTimeout(timer)
-    }
-  }, [introStep])
-
-  useEffect(() => {
     if (showCheckin) {
       const t = setTimeout(() => setShowCheckin(false), 4000)
       return () => clearTimeout(t)
     }
   }, [showCheckin])
 
-  const finishIntro = () => {
-    setIntroStep(2)
-    try { localStorage.setItem('command_intro_seen', '1') } catch {}
-  }
-  
   const handleAskAI = (action) => {
     navigate('/advisor', { state: { 
       activeItem: action,
@@ -695,63 +884,38 @@ export default function Action() {
 
   return (
     <>
-      <AnimatePresence mode="wait">
-        {introStep === 0 && (
-          <motion.div key="saved" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.5 }} onClick={() => setIntroStep(1)}
-            style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#fff',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              padding: 20, textAlign: 'center', cursor: 'pointer' }}>
-            <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2, type: 'spring' }}>
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.1, type: 'spring' }}
-                style={{ fontSize: 56, marginBottom: 16 }}>🎉</motion.div>
-              <h2 style={{ fontSize: 11, color: '#94A3B8', fontWeight: 800, textTransform: 'uppercase', marginBottom: 20, letterSpacing: 2 }}>Total Money Saved</h2>
-              <AnimNum value={totalMoneySaved} prefix="₹" style={{ fontSize: 'clamp(48px, 14vw, 72px)', fontWeight: 900, color: '#0F172A', letterSpacing: -4, lineHeight: 1 }} />
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
-                style={{ marginTop: 28, padding: '10px 24px', background: '#ECFDF5', borderRadius: 100, color: '#059669', fontSize: 14, fontWeight: 800 }}>
-                You're doing great, Ankur! 🚀
-              </motion.div>
-            </motion.div>
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
-              style={{ position: 'absolute', bottom: 60, fontSize: 12, color: '#9CA3AF' }}>
-              Tap anywhere to continue
-            </motion.span>
-          </motion.div>
-        )}
-
-        {introStep === 1 && (
-          <motion.div key="lost" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-            style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#FEF2F2',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              padding: 30, textAlign: 'center' }}>
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}
-              style={{ fontSize: 56, marginBottom: 16 }}>😔</motion.div>
-            <h2 style={{ fontSize: 11, color: '#B91C1C', fontWeight: 800, textTransform: 'uppercase', marginBottom: 20, letterSpacing: 2 }}>But you could still save</h2>
-            <AnimNum value={totalPotentialSavings} prefix="₹" suffix="/yr" style={{ fontSize: 'clamp(42px, 12vw, 64px)', fontWeight: 900, color: '#EF4444', letterSpacing: -4, lineHeight: 1 }} />
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-              style={{ fontSize: 17, color: '#7F1D1D', maxWidth: 280, lineHeight: 1.6, fontWeight: 600, marginTop: 20 }}>
-              Lost to idle cash, missed renewals & unclaimed tax benefits.
-            </motion.p>
-            <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-              whileTap={{ scale: 0.95 }} onClick={finishIntro}
-              style={{ marginTop: 48, background: '#EF4444', color: '#fff', border: 'none',
-                padding: '20px 48px', borderRadius: 100, fontSize: 19, fontWeight: 900,
-                cursor: 'pointer', boxShadow: '0 20px 40px -10px rgba(239, 68, 68, 0.4)' }}>
-              See Action Plan →
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Main Dashboard */}
       <Page paddingTop={100} bg="#F5F5F4">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
-          <motion.div variants={stagger.item} style={{ marginBottom: 28 }}>
+          <motion.div variants={stagger.item} style={{ marginBottom: 28, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <h1 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: '#0F172A', lineHeight: 1.05 }}>
-              Action<br/>Plan<span style={{ color: '#6366F1' }}>.</span>
+              Action Plan<span style={{ color: '#6366F1' }}>.</span>
             </h1>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => navigate('/notifications')}
+              style={{
+                position: 'relative',
+                width: 44, height: 44, borderRadius: 14,
+                background: '#fff', border: '1px solid rgba(0,0,0,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                marginTop: 4,
+              }}
+            >
+              <Bell size={20} color="#0F172A" strokeWidth={2} />
+              <div style={{
+                position: 'absolute', top: -3, right: -3,
+                width: 18, height: 18, borderRadius: 6,
+                background: '#EF4444', border: '2px solid #F5F5F4',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 10, fontWeight: 800, color: '#fff',
+              }}>
+                {notifications.filter(n => n.group === 'urgent').length}
+              </div>
+            </motion.button>
           </motion.div>
 
           {/* Daily check-in reward */}
@@ -762,7 +926,7 @@ export default function Action() {
                 exit={{ opacity: 0, y: -10, height: 0 }} transition={{ duration: 0.4 }}
               >
                 <div style={{
-                  background: '#ECFDF5', border: 'none',
+                  background: '#ECFDF5', border: '1px solid rgba(0,0,0,0.08)',
                   borderRadius: 20, padding: '16px 18px', marginBottom: 24,
                   display: 'flex', alignItems: 'center', gap: 12, color: '#065F46',
                 }}>
@@ -825,7 +989,7 @@ export default function Action() {
             {/* Swipe hint */}
             {remainingActions.length > 0 && (
               <div style={{ display: 'flex', justifyContent: 'center', gap: 32, marginTop: 16, alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94A3B8', fontSize: 13, fontWeight: 700 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', fontSize: 13, fontWeight: 700 }}>
                   <X size={15} /> Skip
                 </div>
                 <div style={{ display: 'flex', gap: 5 }}>
@@ -863,6 +1027,9 @@ export default function Action() {
           </motion.div>
         </motion.div>
       </Page>
+
+      {/* Notification Panel Overlay */}
+      <NotificationPanel open={showNotifs} onClose={() => setShowNotifs(false)} />
     </>
   )
 }
