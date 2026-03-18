@@ -1,0 +1,1 @@
+const i={container:{hidden:{},show:{transition:{staggerChildren:.06,delayChildren:.08}}},item:{hidden:{opacity:0,y:20},show:{opacity:1,y:0,transition:{duration:.45,ease:[.25,.1,.25,1]}}}};export{i as s};

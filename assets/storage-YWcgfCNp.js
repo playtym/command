@@ -1,0 +1,1 @@
+function n(r,t=""){try{return localStorage.getItem(r)??t}catch{return t}}function c(r,t){try{localStorage.setItem(r,String(t))}catch{}}function a(r,t){try{const e=localStorage.getItem(r);return e==null?t:JSON.parse(e)}catch{return t}}function o(r,t){try{localStorage.setItem(r,JSON.stringify(t))}catch{}}export{n as a,c as b,a as g,o as s};
