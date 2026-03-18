@@ -1,0 +1,1 @@
+import{j as a}from"./index-qzPWAqTQ.js";function t({children:l,gap:r=10,pad:o=18,style:s}){return a.jsx("div",{className:"hide-scroll",style:{display:"flex",gap:r,overflowX:"auto",padding:`0 ${o}px`,margin:`0 -${o}px`,scrollSnapType:"x mandatory",...s},children:l})}export{t as S};
